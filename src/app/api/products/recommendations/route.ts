@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
-import { parseJsonString } from '@/lib/utils/json';
+import { parseJsonString, toJsonString } from '@/lib/utils/json';
 import { 
   getPersonalizedRecommendations,
   getSimilarProducts,
@@ -108,10 +108,12 @@ export async function GET(request: NextRequest) {
             { status: 404, headers: getSecurityHeaders() }
           );
         }
-        const convertedProduct = {
-          ...product,
+        const convertedProduct: any = {
+          id: product.id,
+          name: product.name,
+          category: product.category,
           price: Number(product.price),
-          comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
+          rating: product.rating,
           images: parseJsonString(product.images),
           tags: parseJsonString(product.tags),
           aiTags: parseJsonString(product.aiTags),
@@ -167,6 +169,7 @@ export async function POST(request: NextRequest) {
         ...product,
         price: Number(product.price),
         comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
+        aiTags: product.aiTags ? parseJsonString(product.aiTags) : undefined,
         aiScore: product.aiScore ?? undefined,
       };
       const aiTags = await generateAITags(convertedProduct);
@@ -175,7 +178,7 @@ export async function POST(request: NextRequest) {
       await prisma.product.update({
         where: { id: product.id },
         data: {
-          aiTags,
+          aiTags: toJsonString(aiTags),
           aiScore,
         },
       });

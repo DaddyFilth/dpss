@@ -1,6 +1,6 @@
 // Utility functions for handling JSON strings in SQLite
 
-export const parseJsonString = (jsonString: string): any[] => {
+export const parseJsonString = (jsonString: string | null | undefined): any[] => {
   if (!jsonString) return [];
   try {
     return JSON.parse(jsonString);

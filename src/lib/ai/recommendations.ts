@@ -5,12 +5,25 @@ interface Product {
   id: string;
   name: string;
   category: string;
-  tags: string[];
+  tags: string[] | string;
   price: number;
   rating: number;
   aiScore?: number;
-  aiTags?: string[];
+  aiTags?: string[] | string;
 }
+
+// Helper to normalize tags
+const normalizeTags = (tags: string[] | string): string[] => {
+  if (Array.isArray(tags)) return tags;
+  if (typeof tags === 'string' && tags.trim()) {
+    try {
+      return JSON.parse(tags);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
 
 interface UserBehavior {
   productId: string;
@@ -28,8 +41,10 @@ const calculateSimilarity = (product1: Product, product2: Product): number => {
   }
   
   // Tag overlap
-  const commonTags = product1.tags.filter(tag => product2.tags.includes(tag));
-  const tagSimilarity = commonTags.length / Math.max(product1.tags.length, product2.tags.length);
+  const tags1 = normalizeTags(product1.tags);
+  const tags2 = normalizeTags(product2.tags);
+  const commonTags = tags1.filter(tag => tags2.includes(tag));
+  const tagSimilarity = commonTags.length / Math.max(tags1.length, tags2.length);
   similarity += tagSimilarity * 0.4;
   
   // Price range similarity (products in similar price range)

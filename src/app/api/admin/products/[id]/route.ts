@@ -106,12 +106,12 @@ export async function PUT(
     const { id } = await params;
     
     // Convert arrays to JSON strings for SQLite
-    const updateData = { ...validationResult.data };
+    const updateData: any = { ...validationResult.data };
     if (updateData.images) {
-      updateData.images = toJsonString(updateData.images as any);
+      updateData.images = toJsonString(updateData.images);
     }
     if (updateData.tags) {
-      updateData.tags = toJsonString(updateData.tags as any);
+      updateData.tags = toJsonString(updateData.tags);
     }
     
     const product = await prisma.product.update({
