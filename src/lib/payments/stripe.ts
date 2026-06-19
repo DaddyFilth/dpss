@@ -8,6 +8,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   typescript: true,
 });
 
+export { stripe };
+
 interface PaymentIntentInput {
   amount: number;
   currency: string;
