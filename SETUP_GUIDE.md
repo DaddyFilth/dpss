@@ -53,18 +53,20 @@ Visit http://localhost:3000 to see your dropshipping store!
 
 Your store comes pre-configured with:
 
-### Products (63 Dropshipping Products):
+### Products (85 Dropshipping Products):
 - **Custom Apparel**: Premium T-Shirts, Hoodies (with custom printing)
-- **Home Decor**: Canvas Prints, Posters, Throw Pillows
+- **Home Decor**: Canvas Prints, Posters, Throw Pillows, Sunset Lamps, Mushroom Lights
 - **Accessories**: Phone Cases, Tote Bags, Coffee Mugs, Watches, Backpacks
 - **Electronics**: 23 popular electronics including smart watches, gaming gear, audio equipment
-- **Beauty**: LED mirrors, makeup brushes, skincare products
-- **Pet Supplies**: Orthopedic beds, grooming tools, toys
-- **Home & Kitchen**: Organizers, gadgets, appliances
+- **Beauty**: LED mirrors, makeup brushes, skincare products, ice rollers, teeth whitening
+- **Pet Supplies**: Orthopedic beds, grooming tools, toys, AI pet cameras
+- **Home & Kitchen**: Organizers, gadgets, appliances, smart home devices
 - **Baby Products**: Monitors, carriers
 - **Automotive**: Phone mounts, LED lights
-- **Fitness**: Equipment, resistance bands, yoga gear
-- **Health**: Massage devices, posture correctors
+- **Fitness**: Equipment, resistance bands, yoga gear, smart yoga mats
+- **Health**: Massage devices, posture correctors, sleep trackers, smart bottles
+- **Smart Home**: Smart plugs, bulbs, mirrors, locks, plant monitors, air quality monitors
+- **AI-Predicted**: Next-generation smart devices and biometric products
 
 ### Features:
 - ✅ Shopping cart with quantity management
