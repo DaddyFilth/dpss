@@ -1,4 +1,5 @@
 // Stripe payment integration with security-first approach
+import 'server-only'
 import Stripe from 'stripe';
 import { encrypt } from '@/lib/security/encryption';
 

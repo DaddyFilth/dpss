@@ -1,4 +1,5 @@
 // PayPal payment integration
+import 'server-only'
 // Note: This is a simplified implementation for demonstration
 // For production, use the official PayPal SDK or REST API
 

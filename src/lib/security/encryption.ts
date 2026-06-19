@@ -1,3 +1,4 @@
+import 'server-only'
 import { EncryptJWT, jwtDecrypt } from 'jose';
 
 // Security utilities for encryption/decryption
