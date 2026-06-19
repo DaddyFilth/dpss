@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Zap, Target, Users, Share2, TrendingUp, Settings, Lock, Database } from 'lucide-react';
+import { Shield, Zap, Share2, TrendingUp, Settings, Lock, Database } from 'lucide-react';
 
 export default function AdminHub() {
   const { data: session } = useSession();
@@ -95,7 +95,7 @@ export default function AdminHub() {
     {
       title: 'Customer Finder',
       description: 'AI-powered customer targeting and acquisition strategies',
-      icon: Users,
+      icon: Shield,
       color: 'text-blue-500',
       href: '/dashboard/customer-finder',
       badge: 'AI Targeting'
@@ -103,7 +103,7 @@ export default function AdminHub() {
     {
       title: 'Product Finder',
       description: 'Identify winning products and buying opportunities',
-      icon: Target,
+      icon: TrendingUp,
       color: 'text-green-500',
       href: '/dashboard/product-finder',
       badge: 'AI Analysis'

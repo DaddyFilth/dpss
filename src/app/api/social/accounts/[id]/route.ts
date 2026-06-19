@@ -6,10 +6,11 @@ import { getSecurityHeaders } from '@/lib/security/rate-limit';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } = await params;
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -20,7 +21,7 @@ export async function DELETE(
 
     const account = await prisma.socialAccount.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id,
       },
     });
@@ -33,7 +34,7 @@ export async function DELETE(
     }
 
     await prisma.socialAccount.update({
-      where: { id: params.id },
+      where: { id: id },
       data: { isActive: false },
     });
 

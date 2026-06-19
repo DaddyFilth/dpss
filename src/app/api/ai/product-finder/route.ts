@@ -93,12 +93,7 @@ export async function POST(request: NextRequest) {
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
     }));
 
-    const opportunities: any[] = [];
-    for (const product of formattedProducts) {
-      const competitorData = aiProductFinder.simulateCompetitorData(product);
-      const opportunity = await aiProductFinder.analyzeBuyingOpportunity(product, competitorData);
-      opportunities.push(opportunity);
-    }
+    const opportunities = await aiProductFinder.findAllBuyingOpportunities(formattedProducts);
 
     return NextResponse.json(
       { opportunities },

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Target, Users, DollarSign, TrendingUp, Clock, Lightbulb, ArrowRight, CheckCircle } from 'lucide-react';
+import { Shield, Target, Users, DollarSign, ArrowRight, CheckCircle, TrendingUp, Clock } from 'lucide-react';
 
 interface AcquisitionStrategy {
   personas: any[];
@@ -298,7 +298,7 @@ export default function AICustomerTargetingDashboard() {
                     Preferred Platforms
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {habitats.platforms.map((platform: string, i) => (
+                    {habitats.platforms.map((platform: string, i: number) => (
                       <Badge key={i} variant="secondary">
                         {platform}
                       </Badge>
@@ -312,7 +312,7 @@ export default function AICustomerTargetingDashboard() {
                     Communities & Groups
                   </h4>
                   <ul className="space-y-1 text-sm text-gray-600">
-                    {habitats.communities.map((community: string, i) => (
+                    {habitats.communities.map((community: string, i: number) => (
                       <li key={i}>• {community}</li>
                     ))}
                   </ul>
@@ -324,7 +324,7 @@ export default function AICustomerTargetingDashboard() {
                     Peak Activity Times
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {habitats.times.map((time: string, i) => (
+                    {habitats.times.map((time: string, i: number) => (
                       <Badge key={i} variant="outline">
                         {time}
                       </Badge>
@@ -455,7 +455,7 @@ export default function AICustomerTargetingDashboard() {
                 <div>
                   <h4 className="font-semibold mb-2">Target Audiences</h4>
                   <ul className="space-y-1 text-sm text-gray-600">
-                    {retargeting.audiences.map((audience: string, i) => (
+                    {retargeting.audiences.map((audience: string, i: number) => (
                       <li key={i}>• {audience}</li>
                     ))}
                   </ul>
@@ -464,26 +464,25 @@ export default function AICustomerTargetingDashboard() {
                 <div>
                   <h4 className="font-semibold mb-2">Messaging</h4>
                   <ul className="space-y-1 text-sm text-gray-600">
-                    {retargeting.messaging.map((msg: string, i) => (
+                    {retargeting.messaging.map((msg: string, i: number) => (
                       <li key={i}>• {msg}</li>
                     ))}
                   </ul>
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <h4 className="font-semibold mb-2">Optimal Timing</h4>
                   <ul className="space-y-1 text-sm text-gray-600">
-                    {retargeting.timing.map((time: string, i) => (
+                    {retargeting.timing.map((time: string, i: number) => (
                       <li key={i}>• {time}</li>
                     ))}
                   </ul>
                 </div>
-
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
