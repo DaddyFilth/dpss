@@ -29,7 +29,7 @@ export const Header = () => {
             <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
               Products
             </Link>
-            <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link href="/about" className="text-sm font-medium transition-colors hover:text-primary">
               About
             </Link>
           </nav>
@@ -88,7 +88,7 @@ export const Header = () => {
             <Link href="/products" className="text-sm font-medium">
               Products
             </Link>
-            <Link href="#about" className="text-sm font-medium">
+            <Link href="/about" className="text-sm font-medium">
               About
             </Link>
             <Link href="/wishlist" className="text-sm font-medium">
