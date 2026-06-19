@@ -2,6 +2,7 @@ import { AdminNav } from '@/components/admin/admin-nav';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { redirect } from 'next/navigation';
+import { getSessionRole, isAdminRole } from '@/lib/auth/roles';
 
 export default async function AdminLayout({
   children,
@@ -10,7 +11,7 @@ export default async function AdminLayout({
 }) {
   const session = await getServerSession(authOptions);
   
-  if (!session || (session.user as any).role !== 'ADMIN') {
+  if (!session || !isAdminRole(getSessionRole(session))) {
     redirect('/auth/signin');
   }
 

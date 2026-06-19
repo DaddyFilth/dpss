@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPaymentIntent, confirmPayment } from '@/lib/payments/stripe';
+import { createPaymentIntent } from '@/lib/payments/stripe';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
@@ -7,10 +7,10 @@ import { z } from 'zod';
 import { prisma } from '@/lib/utils/prisma';
 
 const paymentSchema = z.object({
-  amount: z.number().positive(),
+  amount: z.number().positive().optional(),
   currency: z.string().default('USD'),
   metadata: z.record(z.string(), z.string()).optional(),
-  orderId: z.string().optional(),
+  orderId: z.string(),
 });
 
 export async function POST(request: NextRequest) {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { amount, currency, metadata, orderId } = validationResult.data;
+    const { currency, metadata, orderId } = validationResult.data;
 
     // Add user ID to metadata
     const enhancedMetadata: Record<string, string> = {
@@ -81,26 +81,30 @@ export async function POST(request: NextRequest) {
       user.name || undefined
     );
 
-    // If orderId is provided, validate it belongs to the user
-    if (orderId) {
-      const order = await prisma.order.findUnique({
-        where: { id: orderId },
-      });
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
 
-      if (!order || order.userId !== (session.user as any).id) {
-        return NextResponse.json(
-          { error: 'Invalid order ID' },
-          { status: 400, headers: getSecurityHeaders() }
-        );
-      }
-
-      enhancedMetadata.orderId = orderId;
+    if (!order || order.userId !== (session.user as any).id) {
+      return NextResponse.json(
+        { error: 'Invalid order ID' },
+        { status: 400, headers: getSecurityHeaders() }
+      );
     }
+
+    if (order.paymentStatus !== 'PENDING') {
+      return NextResponse.json(
+        { error: 'Order is not pending payment' },
+        { status: 400, headers: getSecurityHeaders() }
+      );
+    }
+
+    enhancedMetadata.orderId = orderId;
 
     enhancedMetadata.customerId = customerResult.customerId;
 
     const result = await createPaymentIntent({
-      amount,
+      amount: Number(order.total),
       currency,
       metadata: enhancedMetadata,
       customerId: customerResult.customerId,

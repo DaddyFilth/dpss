@@ -11,6 +11,7 @@ import {
 } from '@/lib/ai/recommendations';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
+import { getSessionRole, isAdminRole } from '@/lib/auth/roles';
 
 export async function GET(request: NextRequest) {
   try {
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session || (session.user as any).role !== 'ADMIN') {
+    if (!session || !isAdminRole(getSessionRole(session))) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401, headers: getSecurityHeaders() }

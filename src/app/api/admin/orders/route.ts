@@ -3,12 +3,13 @@ import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
+import { getSessionRole, isAdminRole } from '@/lib/auth/roles';
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session || (session.user as any).role !== 'ADMIN') {
+    if (!session || !isAdminRole(getSessionRole(session))) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401, headers: getSecurityHeaders() }

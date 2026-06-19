@@ -168,16 +168,23 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Update product stock
+      // Update product stock atomically to avoid concurrent orders overselling inventory.
       for (const item of items) {
-        await tx.product.update({
-          where: { id: item.productId },
+        const stockUpdate = await tx.product.updateMany({
+          where: {
+            id: item.productId,
+            stock: { gte: item.quantity },
+          },
           data: {
             stock: {
               decrement: item.quantity,
             },
           },
         });
+
+        if (stockUpdate.count !== 1) {
+          throw new Error('Insufficient stock');
+        }
       }
 
       // Clear cart items

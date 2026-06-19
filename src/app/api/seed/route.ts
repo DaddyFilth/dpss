@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getSecurityHeaders } from '@/lib/security/rate-limit';
+import { getClientIP, getSecurityHeaders, rateLimit } from '@/lib/security/rate-limit';
+import { getSessionRole, isAdminRole, isSuperAdminRole } from '@/lib/auth/roles';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
@@ -11,16 +12,33 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    const userRole = (session?.user as any)?.role;
-    if (!session || (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN')) {
+    const userRole = getSessionRole(session);
+    if (!session || !isAdminRole(userRole)) {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
         { status: 401, headers: getSecurityHeaders() }
       );
     }
 
+    const ip = getClientIP(request);
+    const rateLimitResult = await rateLimit(ip, 'database-seed', 3, 3600000);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many database maintenance requests' },
+        { status: 429, headers: getSecurityHeaders() }
+      );
+    }
+
     const body = await request.json();
     const { action } = body;
+
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DATABASE_SEEDING !== 'true') {
+      return NextResponse.json(
+        { error: 'Database seeding is disabled in production' },
+        { status: 403, headers: getSecurityHeaders() }
+      );
+    }
 
     if (action === 'seed') {
       console.log('Starting database seeding...');
@@ -36,7 +54,7 @@ export async function POST(request: NextRequest) {
           { 
             success: true, 
             message: 'Database seeded successfully',
-            output: stdout 
+            output: stdout.slice(-2000)
           },
           { headers: getSecurityHeaders() }
         );
@@ -45,12 +63,19 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { 
             error: 'Seeding failed', 
-            details: error.message || error 
+            details: error.message || 'Seed command failed'
           },
           { status: 500, headers: getSecurityHeaders() }
         );
       }
     } else if (action === 'reset') {
+      if (!isSuperAdminRole(userRole)) {
+        return NextResponse.json(
+          { error: 'Unauthorized - Super admin access required' },
+          { status: 403, headers: getSecurityHeaders() }
+        );
+      }
+
       console.log('Resetting database and seeding...');
       
       try {
@@ -67,7 +92,7 @@ export async function POST(request: NextRequest) {
           { 
             success: true, 
             message: 'Database reset and seeded successfully',
-            output: stdout 
+            output: stdout.slice(-2000)
           },
           { headers: getSecurityHeaders() }
         );
@@ -76,7 +101,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { 
             error: 'Reset and seeding failed', 
-            details: error.message || error 
+            details: error.message || 'Reset command failed'
           },
           { status: 500, headers: getSecurityHeaders() }
         );
