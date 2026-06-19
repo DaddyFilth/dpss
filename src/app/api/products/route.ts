@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
+import { sanitizeProductContent, sanitizeDisplayName, sanitizeSearchQuery } from '@/lib/security/sanitize';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { parseJsonString, toJsonString } from '@/lib/utils/json';
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
     const where: any = {};
     
     if (category) {
-      where.category = category;
+      where.category = sanitizeSearchQuery(category);
     }
     
     if (featured === 'true') {
@@ -101,18 +102,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize user input
+    const sanitizedName = sanitizeDisplayName(name);
+    const sanitizedDescription = sanitizeProductContent(description);
+    const sanitizedCategory = sanitizeDisplayName(category);
+    const sanitizedSku = sku ? sanitizeDisplayName(sku) : undefined;
+
     const product = await prisma.product.create({
       data: {
-        name,
-        description,
+        name: sanitizedName,
+        description: sanitizedDescription,
         price: parseFloat(price),
         comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
         image,
         images: body.images || [image],
-        category,
+        category: sanitizedCategory,
         tags: body.tags || [],
         stock: body.stock || 0,
-        sku,
+        sku: sanitizedSku,
         featured: body.featured || false,
       },
     }).then(p => ({

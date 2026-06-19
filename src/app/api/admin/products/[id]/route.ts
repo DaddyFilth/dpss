@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
+import { sanitizeProductContent, sanitizeDisplayName } from '@/lib/security/sanitize';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { z } from 'zod';
@@ -102,8 +103,22 @@ export async function PUT(
 
     const { id } = await params;
     
-    // Convert arrays to JSON strings for SQLite
+    // Sanitize user input
     const updateData: any = { ...validationResult.data };
+    if (updateData.name) {
+      updateData.name = sanitizeDisplayName(updateData.name);
+    }
+    if (updateData.description) {
+      updateData.description = sanitizeProductContent(updateData.description);
+    }
+    if (updateData.category) {
+      updateData.category = sanitizeDisplayName(updateData.category);
+    }
+    if (updateData.sku) {
+      updateData.sku = sanitizeDisplayName(updateData.sku);
+    }
+    
+    // Convert arrays to JSON strings for SQLite
     if (updateData.images) {
       updateData.images = toJsonString(updateData.images);
     }

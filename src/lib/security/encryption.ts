@@ -1,5 +1,6 @@
 import 'server-only'
 import { EncryptJWT, jwtDecrypt } from 'jose';
+import { sanitizeDisplayName, sanitizeHtml } from './sanitize';
 
 // Security utilities for encryption/decryption
 // Uses AES-256-GCM for secure encryption
@@ -62,11 +63,9 @@ export const generateSecureToken = async (length: number = 32): Promise<string> 
 };
 
 // Sanitize user input to prevent XSS
+// Uses comprehensive sanitization from dedicated sanitize module
 export const sanitizeInput = (input: string): string => {
-  return input
-    .replace(/[<>]/g, '') // Remove potential HTML tags
-    .trim()
-    .substring(0, 1000); // Limit length
+  return sanitizeDisplayName(input);
 };
 
 // Validate email format

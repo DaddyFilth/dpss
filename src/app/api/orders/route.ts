@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
+import { sanitizeDisplayName, sanitizeUrl } from '@/lib/security/sanitize';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { getOrCreateCustomer, createPaymentIntent } from '@/lib/payments/stripe';
@@ -58,6 +59,18 @@ export async function POST(request: NextRequest) {
     }
 
     const { items, shippingAddress, paymentMethod } = validationResult.data;
+
+    // Sanitize shipping address
+    const sanitizedShippingAddress = {
+      name: sanitizeDisplayName(shippingAddress.name),
+      email: shippingAddress.email, // Email validation happens in schema
+      phone: shippingAddress.phone ? sanitizeDisplayName(shippingAddress.phone) : undefined,
+      address: sanitizeDisplayName(shippingAddress.address),
+      city: sanitizeDisplayName(shippingAddress.city),
+      state: sanitizeDisplayName(shippingAddress.state),
+      zip: sanitizeDisplayName(shippingAddress.zip),
+      country: sanitizeDisplayName(shippingAddress.country),
+    };
 
     // Get user information
     const user = await prisma.user.findUnique({
@@ -141,14 +154,14 @@ export async function POST(request: NextRequest) {
           subtotal,
           tax,
           shipping,
-          shippingName: shippingAddress.name,
-          shippingEmail: shippingAddress.email,
-          shippingPhone: shippingAddress.phone,
-          shippingAddress: shippingAddress.address,
-          shippingCity: shippingAddress.city,
-          shippingState: shippingAddress.state,
-          shippingZip: shippingAddress.zip,
-          shippingCountry: shippingAddress.country,
+          shippingName: sanitizedShippingAddress.name,
+          shippingEmail: sanitizedShippingAddress.email,
+          shippingPhone: sanitizedShippingAddress.phone,
+          shippingAddress: sanitizedShippingAddress.address,
+          shippingCity: sanitizedShippingAddress.city,
+          shippingState: sanitizedShippingAddress.state,
+          shippingZip: sanitizedShippingAddress.zip,
+          shippingCountry: sanitizedShippingAddress.country,
           items: {
             create: orderItems,
           },
