@@ -36,7 +36,10 @@ class AIContentGenerator {
     const product = request.product;
     const platform = request.platform || 'instagram';
     const tone = request.tone || 'exciting';
-    const emojis = this.emojiLibrary[tone];
+    
+    // Map tone to emoji library key
+    const toneKey = tone === 'exciting' ? 'excitement' : tone;
+    const emojis = this.emojiLibrary[toneKey as keyof typeof this.emojiLibrary] || this.emojiLibrary.excitement;
 
     let content = '';
     let hashtags: string[] = [];
@@ -92,7 +95,7 @@ ${this.getProductBenefit(product, tone)}
 
 ✨ ${trendingKeyword}
 ✨ ${product?.description || 'Must-have product'}
-✨ ${this.getTrendingMessage(product)}
+✨ ${this.getViralReason(product)}
 
 🔥 **Why it's viral:** ${this.getViralReason(product)}
 
@@ -107,10 +110,11 @@ ${this.getProductBenefit(product, tone)}
 
   // Generate TikTok post
   private generateTikTokPost(product: any, tone: string, emojis: string[]): string {
+    const trendingKeyword = this.trendingKeywords[Math.floor(Math.random() * this.trendingKeywords.length)];
     return `
 ${emojis[0]} POV: You just found the ${product?.name || 'perfect product'} ${emojis[1]}
 
-This ${trendKeyword} is taking over TikTok! 📈
+This ${trendingKeyword} is taking over TikTok! 📈
 
 ${this.getProductBenefit(product, tone)}
 
@@ -187,7 +191,7 @@ ${emojis[0]} ${product?.name || 'Great Product!'} ${emojis[1]}
 
 ${this.getProductBenefit(product, tone)}
 
-✨ ${this.trendingKeyword}
+✨ ${this.trendingKeywords[0]}
 💰 $${product?.price || 'Shop now'}
 🚚 Fast shipping available
 
@@ -199,7 +203,10 @@ ${this.getCTA(product)}
   generateAdCopy(request: ContentRequest): GeneratedContent {
     const product = request.product;
     const tone = request.tone || 'exciting';
-    const emojis = this.emojiLibrary[tone];
+    
+    // Map tone to emoji library key
+    const toneKey = tone === 'exciting' ? 'excitement' : tone;
+    const emojis = this.emojiLibrary[toneKey as keyof typeof this.emojiLibrary] || this.emojiLibrary.excitement;
 
     const headlines = [
       `🔥 ${product?.name || 'Amazing Product'} - ${this.trendingKeywords[0]}!`,
@@ -297,13 +304,14 @@ ${keywords.length > 0 ? `\nKeywords: ${keywords.join(', ')}` : ''}
 
   // Helper methods
   private getProductBenefit(product: any, tone: string): string {
+    const toneKey = tone === 'exciting' ? 'exciting' : tone;
     const benefits = {
       exciting: `${product?.description || 'This amazing product'} will transform your life!`,
       professional: `${product?.description || 'High-quality product'} for your needs`,
       casual: `${product?.description || 'Super cool product'} you'll love`,
       luxury: `${product?.description || 'Premium quality'} for the discerning customer`
     };
-    return benefits[tone] || benefits.exciting;
+    return benefits[toneKey as keyof typeof benefits] || benefits.exciting;
   }
 
   private getDetailedDescription(product: any): string {

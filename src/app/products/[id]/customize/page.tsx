@@ -64,9 +64,9 @@ export default function ProductCustomizePage() {
   const calculateCost = (data: CustomizationData) => {
     let cost = 0;
     
-    if (data.customText?.length > 0) cost += 5;
-    if (data.customImage?.length > 0) cost += 10 * data.customImage.length;
-    if (data.customColors?.length > 0) cost += 3;
+    if (data.customText && data.customText.length > 0) cost += 5;
+    if (data.customImage && data.customImage.length > 0) cost += 10 * data.customImage.length;
+    if (data.customColors && data.customColors.length > 0) cost += 3;
     if (data.material === 'premium') cost += 10;
     else if (data.material === 'luxury') cost += 25;
     if (data.quality === 'high') cost += 8;

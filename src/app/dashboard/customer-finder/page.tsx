@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Target, Users, DollarSign, ArrowRight, CheckCircle, TrendingUp, Clock } from 'lucide-react';
+import { Shield, Target, Users, DollarSign, ArrowRight, CheckCircle, TrendingUp, Clock, Lightbulb } from 'lucide-react';
 
 interface AcquisitionStrategy {
   personas: any[];

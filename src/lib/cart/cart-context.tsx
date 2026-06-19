@@ -65,15 +65,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     
     let cost = 0;
     
-    if (customization.customText?.length > 0) {
+    if (customization.customText && customization.customText.length > 0) {
       cost += 5;
     }
     
-    if (customization.customImage?.length > 0) {
+    if (customization.customImage && customization.customImage.length > 0) {
       cost += 10 * customization.customImage.length;
     }
     
-    if (customization.customColors?.length > 0) {
+    if (customization.customColors && customization.customColors.length > 0) {
       cost += 3;
     }
     

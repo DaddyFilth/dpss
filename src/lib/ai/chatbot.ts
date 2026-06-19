@@ -13,7 +13,7 @@ interface ChatContext {
   userId: string;
   conversationHistory: ChatMessage[];
   customerProfile?: any;
-  currentIntent?: 'support' | 'sales' | 'general' | 'order-status';
+  currentIntent?: 'support' | 'sales' | 'general' | 'order-status' | 'product-info' | 'recommendation' | 'pricing' | 'shipping' | 'discount' | 'greeting';
   cartContents?: any[];
   browsingHistory?: string[];
 }

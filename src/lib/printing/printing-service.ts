@@ -192,19 +192,24 @@ export class PrintingService {
     const service = this.getService(printOrder.printingSource);
     
     try {
-      const result = await service.getOrder(printOrder.orderItemId);
-      
-      // Update print order status
-      await prisma.printOrder.update({
-        where: { id: printOrderId },
-        data: {
-          status: this.mapPrintStatus(result.status),
-          trackingNumber: result.tracking_number || null,
-          estimatedDelivery: result.estimated_delivery ? new Date(result.estimated_delivery) : null,
-        },
-      });
+      // Check if the service has getOrder method
+      if ('getOrder' in service) {
+        const result = await (service as any).getOrder(printOrder.orderItemId);
+        
+        // Update print order status
+        await prisma.printOrder.update({
+          where: { id: printOrderId },
+          data: {
+            status: this.mapPrintStatus(result.status) as any,
+            trackingNumber: result.tracking_number || null,
+            estimatedDelivery: result.estimated_delivery ? new Date(result.estimated_delivery) : null,
+          },
+        });
 
-      return result;
+        return result;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Failed to get print order status:', error);
       throw error;
@@ -226,7 +231,7 @@ export class PrintingService {
 
 // Helper functions for printing operations
 export const printingHelpers = {
-  async calculateCustomizationPrice(customizationData: any, basePrice: number): number {
+  async calculateCustomizationPrice(customizationData: any, basePrice: number): Promise<number> {
     let additionalCost = 0;
     
     // Add costs based on customization options
