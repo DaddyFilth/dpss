@@ -1,0 +1,22 @@
+# robots.txt for AI Dropship
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /auth/
+
+# Allow product pages and content
+Allow: /products/
+Allow: /categories/
+Allow: /blog/
+
+Disallow: /_next/
+Disallow: /static/
