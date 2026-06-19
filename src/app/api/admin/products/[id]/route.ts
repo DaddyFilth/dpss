@@ -52,9 +52,6 @@ export async function GET(
         ...product, 
         price: Number(product.price),
         comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
-        images: parseJsonString(product.images),
-        tags: parseJsonString(product.tags),
-        aiTags: parseJsonString(product.aiTags),
         aiScore: product.aiScore ?? undefined,
       } },
       { headers: getSecurityHeaders() }
@@ -121,9 +118,6 @@ export async function PUT(
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
-      images: parseJsonString(p.images),
-      tags: parseJsonString(p.tags),
-      aiTags: parseJsonString(p.aiTags),
       aiScore: p.aiScore ?? undefined,
     }));
 

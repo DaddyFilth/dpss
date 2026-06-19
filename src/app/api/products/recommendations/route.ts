@@ -40,9 +40,6 @@ export async function GET(request: NextRequest) {
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
-      images: parseJsonString(p.images),
-      tags: parseJsonString(p.tags),
-      aiTags: parseJsonString(p.aiTags),
       aiScore: p.aiScore ?? undefined,
     })));
 
@@ -169,7 +166,7 @@ export async function POST(request: NextRequest) {
         ...product,
         price: Number(product.price),
         comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
-        aiTags: product.aiTags ? parseJsonString(product.aiTags) : undefined,
+        aiTags: product.aiTags || [],
         aiScore: product.aiScore ?? undefined,
       };
       const aiTags = await generateAITags(convertedProduct);
@@ -178,7 +175,7 @@ export async function POST(request: NextRequest) {
       await prisma.product.update({
         where: { id: product.id },
         data: {
-          aiTags: toJsonString(aiTags),
+          aiTags: aiTags,
           aiScore,
         },
       });

@@ -5,14 +5,14 @@ interface Product {
   id: string;
   name: string;
   category: string;
-  tags: string[] | string;
+  tags: string[];
   price: number;
   rating: number;
   aiScore?: number;
-  aiTags?: string[] | string;
+  aiTags?: string[];
 }
 
-// Helper to normalize tags
+// Helper to normalize tags (for backward compatibility)
 const normalizeTags = (tags: string[] | string): string[] => {
   if (Array.isArray(tags)) return tags;
   if (typeof tags === 'string' && tags.trim()) {
