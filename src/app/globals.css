@@ -8,6 +8,19 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+  --color-muted-foreground: #6b7280;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+  --color-secondary: #f3f4f6;
+  --color-secondary-foreground: #171717;
+  --color-accent: #f3f4f6;
+  --color-accent-foreground: #171717;
+  --color-input: #e5e7eb;
+  --color-ring: #2563eb;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +29,16 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  }
+  @theme inline {
+    --color-muted-foreground: #9ca3af;
+    --color-card: #1a1a1a;
+    --color-card-foreground: #ededed;
+    --color-secondary: #262626;
+    --color-secondary-foreground: #ededed;
+    --color-accent: #262626;
+    --color-accent-foreground: #ededed;
+    --color-input: #404040;
   }
 }
 

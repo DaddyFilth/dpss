@@ -91,6 +91,7 @@ A secure, AI-powered dropshipping e-commerce platform built with Next.js 16, Typ
    ```bash
    npx prisma generate
    npx prisma db push
+   npm run db:seed
    ```
 
 6. **Run the development server**
@@ -99,6 +100,20 @@ A secure, AI-powered dropshipping e-commerce platform built with Next.js 16, Typ
    ```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🎯 Quick Start
+
+For a detailed quick start guide, see [SETUP_GUIDE.md](SETUP_GUIDE.md). This includes:
+- Free PostgreSQL database setup (Neon/Supabase)
+- Pre-configured dropshipping products
+- Printful integration setup
+- Payment gateway configuration
+
+The database seed includes 10 real dropshipping products with:
+- Custom apparel (t-shirts, hoodies)
+- Home decor (canvas prints, posters, pillows)
+- Accessories (phone cases, tote bags, mugs)
+- Electronics (chargers, earbuds)
 
 ## 🏗️ Project Structure
 

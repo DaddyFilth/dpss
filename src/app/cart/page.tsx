@@ -18,8 +18,8 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <ShoppingCart className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <ShoppingCart className="h-8 w-8 text-gray-900" />
             Shopping Cart
           </h1>
         </div>
@@ -27,9 +27,9 @@ export default function CartPage() {
         {items.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
-              <p className="text-muted-foreground mb-6">
+              <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <h2 className="text-2xl font-semibold mb-2 text-gray-900">Your cart is empty</h2>
+              <p className="text-gray-600 mb-6">
                 Add some products to get started!
               </p>
               <Button asChild>
@@ -51,24 +51,24 @@ export default function CartPage() {
                         className="w-24 h-24 object-cover rounded-lg"
                       />
                       <div className="flex-1">
-                        <h3 className="font-semibold mb-1">{item.name}</h3>
-                        <p className="text-primary font-bold">${item.price.toFixed(2)}</p>
+                        <h3 className="font-semibold mb-1 text-gray-900">{item.name}</h3>
+                        <p className="text-blue-600 font-bold">${item.price.toFixed(2)}</p>
                         
                         <div className="flex items-center gap-4 mt-4">
                           <div className="flex items-center border rounded-lg">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8"
+                              className="h-8 w-8 text-gray-900"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
-                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <span className="w-8 text-center font-medium text-gray-900">{item.quantity}</span>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8"
+                              className="h-8 w-8 text-gray-900"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               <Plus className="h-4 w-4" />
@@ -77,7 +77,7 @@ export default function CartPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="text-destructive hover:text-destructive"
+                            className="text-red-600 hover:text-red-700"
                             onClick={() => removeFromCart(item.id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -94,24 +94,24 @@ export default function CartPage() {
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle className="text-gray-900">Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="text-gray-600">Subtotal</span>
+                    <span className="font-medium text-gray-900">${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className="font-medium">${shipping.toFixed(2)}</span>
+                    <span className="text-gray-600">Shipping</span>
+                    <span className="font-medium text-gray-900">${shipping.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="text-gray-600">Tax</span>
+                    <span className="font-medium text-gray-900">${tax.toFixed(2)}</span>
                   </div>
                   <div className="border-t pt-4 flex justify-between">
-                    <span className="font-bold">Total</span>
-                    <span className="font-bold text-lg">${total.toFixed(2)}</span>
+                    <span className="font-bold text-gray-900">Total</span>
+                    <span className="font-bold text-lg text-gray-900">${total.toFixed(2)}</span>
                   </div>
                 </CardContent>
                 <CardFooter>
