@@ -1,8 +1,8 @@
 {
   "DATABASE_URL": "postgresql://user:password@host:5432/database_name",
   "NEXTAUTH_URL": "https://your-project.vercel.app",
-  "NEXTAUTH_SECRET": "Nkpzluw9/OPKFTy42ICjqwOB/4BAetxexxu1XLCXfDs=",
-  "ENCRYPTION_KEY": "b9GtmZrFHDPUiDKC3hvagvTRrcwwNmRM",
+  "NEXTAUTH_SECRET": "generate_32_character_random_secret_here",
+  "ENCRYPTION_KEY": "generate_32_character_encryption_key_here",
   "RATE_LIMIT_MAX_REQUESTS": "100",
   "RATE_LIMIT_WINDOW_MS": "900000",
   "STRIPE_PUBLIC_KEY": "pk_test_your_stripe_publishable_key",
