@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Upload, Type, Palette, Image as ImageIcon, Download, RotateCw } from 'lucide-react';
+import Image from 'next/image';
 
 export interface CustomizationData {
   customText?: string;
@@ -20,9 +21,26 @@ export interface CustomizationData {
   files?: File[];
 }
 
+interface CustomizationConfig {
+  text?: {
+    enabled?: boolean;
+    maxChars?: number;
+    required?: boolean;
+  };
+  image?: {
+    enabled?: boolean;
+    maxFiles?: number;
+    required?: boolean;
+  };
+  color?: {
+    enabled?: boolean;
+    options?: string[];
+  };
+}
+
 interface ProductCustomizerProps {
   productId: string;
-  customizationConfig?: any;
+  customizationConfig?: CustomizationConfig;
   onCustomizationChange: (data: CustomizationData) => void;
   initialData?: CustomizationData;
 }
@@ -172,11 +190,13 @@ export const ProductCustomizer = ({
                 {customizationData.customImage && customizationData.customImage.length > 0 && (
                   <div className="grid grid-cols-3 gap-2 mt-4">
                     {customizationData.customImage.map((img, index) => (
-                      <div key={index} className="relative">
-                        <img
+                      <div key={index} className="relative h-24">
+                        <Image
                           src={img}
                           alt={`Custom ${index + 1}`}
-                          className="w-full h-24 object-cover rounded border"
+                          fill
+                          className="object-cover rounded border"
+                          sizes="(max-width: 768px) 100px, 200px"
                         />
                         <Button
                           variant="destructive"
@@ -260,8 +280,10 @@ export const ProductCustomizer = ({
 
           <TabsContent value="options" className="space-y-4 mt-4">
             <div>
-              <Label>Material</Label>
+              <Label htmlFor="material-select">Material</Label>
               <select
+                id="material-select"
+                title="Material"
                 value={customizationData.material || ''}
                 onChange={(e) => setCustomizationData((prev) => ({ ...prev, material: e.target.value }))}
                 className="mt-2 w-full p-2 border rounded"
@@ -274,8 +296,10 @@ export const ProductCustomizer = ({
             </div>
 
             <div>
-              <Label>Size</Label>
+              <Label htmlFor="size-select">Size</Label>
               <select
+                id="size-select"
+                title="Size"
                 value={customizationData.size || ''}
                 onChange={(e) => setCustomizationData((prev) => ({ ...prev, size: e.target.value }))}
                 className="mt-2 w-full p-2 border rounded"
@@ -289,8 +313,10 @@ export const ProductCustomizer = ({
             </div>
 
             <div>
-              <Label>Quality</Label>
+              <Label htmlFor="quality-select">Quality</Label>
               <select
+                id="quality-select"
+                title="Quality"
                 value={customizationData.quality || ''}
                 onChange={(e) => setCustomizationData((prev) => ({ ...prev, quality: e.target.value }))}
                 className="mt-2 w-full p-2 border rounded"
@@ -303,8 +329,10 @@ export const ProductCustomizer = ({
             </div>
 
             <div>
-              <Label>Print Method</Label>
+              <Label htmlFor="print-method-select">Print Method</Label>
               <select
+                id="print-method-select"
+                title="Print Method"
                 value={customizationData.printMethod || ''}
                 onChange={(e) => setCustomizationData((prev) => ({ ...prev, printMethod: e.target.value }))}
                 className="mt-2 w-full p-2 border rounded"
@@ -341,7 +369,15 @@ export const ProductCustomizer = ({
           {previewImage && (
             <div className="border rounded-lg p-4">
               <Label className="mb-2 block">Preview</Label>
-              <img src={previewImage} alt="Customization preview" className="w-full rounded" />
+              <div className="relative w-full h-64">
+                <Image
+                  src={previewImage}
+                  alt="Customization preview"
+                  fill
+                  className="rounded object-cover"
+                  sizes="100vw"
+                />
+              </div>
             </div>
           )}
 
@@ -356,4 +392,4 @@ export const ProductCustomizer = ({
       </CardContent>
     </Card>
   );
-};
+}

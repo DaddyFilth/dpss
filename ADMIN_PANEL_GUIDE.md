@@ -1,4 +1,5 @@
 # Admin Panel Guide
+
 ## Complete Dashboard Navigation and Usage
 
 ## 🎯 Overview
@@ -12,17 +13,20 @@ The admin panel provides a centralized hub for managing your dropshipping store'
 The Admin Hub is your central navigation point to all admin dashboards. It provides:
 
 **Quick Dashboard Access:**
+
 1. **Automation Center** - Lead generation, email sequences, social media posting on autopilot
 2. **Customer Finder** - AI-powered customer targeting and acquisition strategies
 3. **Product Finder** - Identify winning products and buying opportunities
 4. **Social Media** - Manage store's social media accounts and post products
 
 **Quick Actions:**
+
 - Start Automations - Jump to automation dashboard
 - Connect Social Accounts - Jump to social media dashboard
 - Manage Products - Jump to product management
 
 **Access Control:**
+
 - Requires admin login
 - Shows user role (ADMIN or SUPER_ADMIN)
 - Redirects non-admins to home page
@@ -31,15 +35,16 @@ The Admin Hub is your central navigation point to all admin dashboards. It provi
 
 ### Location: `/dashboard/automation`
 
-### Features:
+### Automation Features
 
-**1. Overview Stats**
+#### 1. Overview Stats
+
 - Total Leads captured automatically
 - Social Posts auto-generated and posted
 - Emails Sent through automation
 - Active Automations count
 
-**2. Lead Capture Automations**
+### 2. Lead Capture Automations
 
 Toggle on/off these automated lead capture mechanisms:
 
@@ -83,7 +88,7 @@ Toggle on/off these automated lead capture mechanisms:
   - Stats: Views, captures, conversion rate
   - Toggle: Enable/disable
 
-**3. Email Automations**
+### 3. Email Automations
 
 Toggle on/off these email sequences:
 
@@ -123,7 +128,7 @@ Toggle on/off these email sequences:
   - Stats: Sent, opened, clicked, converted
   - Toggle: Enable/disable
 
-**4. Social Media Automations**
+### 4. Social Media Automations
 
 Toggle on/off these content automations:
 
@@ -190,7 +195,7 @@ Toggle on/off these content automations:
   - Stats: Posts, avg engagement
   - Toggle: Enable/disable
 
-**5. Scheduled Tasks**
+### 5. Scheduled Tasks
 
 Toggle on/off these scheduled automation tasks:
 
@@ -229,15 +234,16 @@ Toggle on/off these scheduled automation tasks:
   - Toggle: Enable/disable
   - Button: "Run Now" (manual trigger)
 
-**6. Global Controls**
+### 6. Global Controls
 
 - **Start Scheduler** - Starts the automation scheduler
 - **Stop Scheduler** - Stops the automation scheduler
 - **Refresh** - Reloads all automation data
 
-### Button Behavior:
+### Button Behavior
 
 **Toggle Switches:**
+
 - Click to enable/disable automation
 - Shows loading state during API call
 - Disables temporarily while processing
@@ -245,6 +251,7 @@ Toggle on/off these scheduled automation tasks:
 - Refreshes data after toggle
 
 **Run Now Buttons:**
+
 - Triggers task immediately
 - Shows "Running..." during execution
 - Disabled while running
@@ -252,6 +259,7 @@ Toggle on/off these scheduled automation tasks:
 - Refreshes data after execution
 
 **Scheduler Controls:**
+
 - Start/Stop scheduler button
 - Shows "Processing..." during action
 - Changes button text based on state
@@ -261,15 +269,17 @@ Toggle on/off these scheduled automation tasks:
 
 ### Location: `/dashboard/customer-finder`
 
-### Features:
+### Customer Finder Features
 
-**1. Expected Results Overview**
+#### 1. Expected Results Overview
+
 - Expected monthly leads from budget
 - Conversion rate projection
 - Customer acquisition cost (CAC)
 - Expected monthly revenue
 
-**2. Customer Personas (6 segments)**
+#### 2. Customer Personas (6 segments)
+
 - Trendy Home Decor Enthusiast
 - Tech Early Adopter
 - Budget-Conscious Parent
@@ -278,13 +288,15 @@ Toggle on/off these scheduled automation tasks:
 - Fitness Enthusiast
 
 Click any persona to see:
+
 - Where they hang out (platforms, communities)
 - Hashtags they follow
 - Peak activity times
 - Content preferences
 - Tailored strategy
 
-**3. Where They Hang Out**
+### 3. Where They Hang Out
+
 - Preferred platforms per persona
 - Communities and groups
 - Hashtags
@@ -292,23 +304,27 @@ Click any persona to see:
 - Content types
 - Strategy
 
-**4. Best Acquisition Channels**
+#### 4. Best Acquisition Channels
+
 - Ranked channels for persona
 - CAC and conversion rates
 - Trending indicators
 - AI strategy per channel
 
-**5. Budget Allocation**
+#### 5. Budget Allocation
+
 - Visual budget breakdown
 - AI-optimized percentages
 - Channel-specific allocation
 
-**6. Lead Capture Strategies**
+#### 6. Lead Capture Strategies
+
 - AI-recommended capture methods
 - Conversion optimizations
 - Targeting recommendations
 
-**7. Retargeting Strategy**
+#### 7. Retargeting Strategy
+
 - Target audiences
 - Messaging frameworks
 - Optimal timing
@@ -318,14 +334,16 @@ Click any persona to see:
 
 ### Location: `/dashboard/product-finder`
 
-### Features:
+### Product Finder Features
 
-**1. Market Insights Cards**
+#### 1. Market Insights Cards
+
 - Trending Categories
 - Emerging Trends
 - High Margin Opportunities
 
-**2. Buying Opportunities List**
+#### 2. Buying Opportunities List
+
 - Products ranked by AI confidence
 - Profit margin percentages
 - Estimated monthly sales and profit
@@ -333,7 +351,8 @@ Click any persona to see:
 - Recommended action badges
 - Priority ranking
 
-**3. Action Recommendations**
+#### 3. Action Recommendations
+
 - Add to Store (high confidence, good margin)
 - Price Adjustment (good confidence, low margin)
 - Investigate (good confidence, low competition)
@@ -343,20 +362,23 @@ Click any persona to see:
 
 ### Location: `/dashboard/social`
 
-### Features:
+### Social Media Features
 
-**1. Connected Accounts**
+#### 1. Connected Accounts
+
 - Visual platform cards with status
 - Connect/disconnect buttons
 - Account information display
 
-**2. Post Product**
+#### 2. Post Product
+
 - Product selection dropdown
 - Platform selector
 - Content editor with AI generation
 - Post now / Schedule options
 
-**3. Scheduled Posts**
+#### 3. Scheduled Posts
+
 - View scheduled posts
 - Track post status
 - Edit/delete functionality
@@ -366,18 +388,22 @@ Click any persona to see:
 ### Admin-Only Access
 
 All admin dashboards require:
+
 - **ADMIN** role
 - **SUPER_ADMIN** role
 
 **If not logged in:**
+
 - Shows "Admin Login Required" screen
 - Button to sign in at `/auth/signin`
 
 **If logged in but not admin:**
+
 - Shows "Access Denied" screen
 - Button to return to store
 
 **Role Display:**
+
 - Admin Hub shows current user role
 - Badge displays ADMIN or SUPER_ADMIN
 
@@ -447,17 +473,20 @@ All admin dashboards require:
 ### Daily Checks
 
 **Automation Dashboard:**
+
 - Check lead capture stats
 - Monitor email open rates
 - Review social post engagement
 - Verify scheduler is running
 
 **Customer Finder:**
+
 - Review customer personas
 - Check where customers hang out
 - Note optimal posting times
 
 **Product Finder:**
+
 - Check top buying opportunities
 - Review new AI recommendations
 - Implement recommended actions
@@ -465,18 +494,21 @@ All admin dashboards require:
 ### Weekly Reviews
 
 **Automation Performance:**
+
 - Total leads captured
 - Email conversion rates
 - Social media engagement
 - Overall automation health
 
 **Customer Acquisition:**
+
 - CAC by channel
 - Conversion rates
 - ROI analysis
 - Channel optimization
 
 **Product Performance:**
+
 - AI prediction accuracy
 - Top selling products
 - Margin analysis
@@ -489,6 +521,7 @@ All admin dashboards require:
 **Issue:** Buttons don't respond when clicked
 
 **Solutions:**
+
 1. Check browser console for errors
 2. Verify you're logged in as admin
 3. Refresh the page
@@ -500,6 +533,7 @@ All admin dashboards require:
 **Issue:** Automations not running despite being enabled
 
 **Solutions:**
+
 1. Check if scheduler is started
 2. Verify automation toggles are on
 3. Check scheduled task status
@@ -511,6 +545,7 @@ All admin dashboards require:
 **Issue:** Dashboard shows no data or loading spinner
 
 **Solutions:**
+
 1. Click "Refresh" button
 2. Check browser console for errors
 3. Verify API endpoint is accessible
@@ -522,6 +557,7 @@ All admin dashboards require:
 **Issue:** Seeing "Access Denied" screen
 
 **Solutions:**
+
 1. Sign out and sign in again
 2. Verify user role is ADMIN or SUPER_ADMIN
 3. Check database user role field
