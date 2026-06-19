@@ -1,9 +1,9 @@
 # Social Selling Platform Integration
-## Multi-Platform Selling Guide
+## Admin Social Media Management Guide
 
 ## 🌐 Overview
 
-Your dropshipping store now includes a comprehensive social selling platform that allows you to connect multiple social media accounts and post products across platforms automatically with AI-generated content.
+Your dropshipping store includes an admin-only social selling platform that allows you (the store admin) to connect your store's social media accounts and post products across platforms automatically with AI-generated content. This is for managing the **store's** social media presence, not for customers to post to their own accounts.
 
 ## 🎯 Features Implemented
 
@@ -52,16 +52,18 @@ Your dropshipping store now includes a comprehensive social selling platform tha
 
 ## 🔧 API Endpoints
 
-### Authentication
+### Authentication (Admin Only)
 
 #### POST `/api/auth/signup`
-Create a new user account.
+Create a new admin account.
+
+**Note:** First user becomes SUPER_ADMIN, subsequent users become ADMIN.
 
 **Request:**
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
+  "name": "Admin Name",
+  "email": "admin@yourstore.com",
   "password": "securepassword123"
 }
 ```
@@ -69,23 +71,22 @@ Create a new user account.
 **Response:**
 ```json
 {
-  "message": "User created successfully",
+  "message": "Admin account created successfully",
   "user": {
     "id": "user_123",
-    "email": "john@example.com",
-    "name": "John Doe"
+    "email": "admin@yourstore.com",
+    "name": "Admin Name",
+    "role": "ADMIN"
   }
 }
 ```
 
 #### GET/POST `/api/auth/signin`
-Sign in with OAuth or credentials.
+Sign in as admin with OAuth or credentials.
 
-**OAuth Flow:**
-```
-Redirect to: /api/auth/signin?provider=instagram
-Callback: /dashboard/social
-```
+**Access:** Redirects to `/dashboard/social` after successful login.
+
+**Protection:** Only users with ADMIN or SUPER_ADMIN role can access social dashboard.
 
 ### Social Accounts
 
@@ -183,37 +184,28 @@ Get all available products for posting.
 - `category` (optional): Filter by category
 - `limit` (optional): Number of results (default: 50)
 
-## 🎨 UI Components
+## 🎨 UI Components (Admin Only)
 
-### Sign In Page (`/auth/signin`)
-- Social login buttons for all platforms
+### Sign In Page (`/auth/signin`) - Admin Access
+- Social login buttons for all platforms (store's business accounts)
 - Email/password authentication
+- Shield icon indicating admin-only access
 - Error handling
-- Redirect to dashboard after login
+- Redirect to admin dashboard after login
 
-### Sign Up Page (`/auth/signup`)
-- User registration form
+### Sign Up Page (`/auth/signup`) - Admin Account Creation
+- Admin registration form
 - Password confirmation
 - Email validation
+- Auto-assigns ADMIN or SUPER_ADMIN role
 - Auto-login after signup
 
-### Social Dashboard (`/dashboard/social`)
-- **Tab 1: Connected Accounts**
-  - Visual platform cards with status
-  - Connect/disconnect buttons
-  - Account information display
-  
-- **Tab 2: Post Product**
-  - Product selection dropdown
-  - Platform selector
-  - Content editor
-  - AI content generation button
-  - Post now / Schedule options
-  
-- **Tab 3: Scheduled Posts**
-  - List of scheduled posts
-  - Edit/delete functionality
-  - Status indicators
+### Social Dashboard (`/dashboard/social`) - Protected
+- **Protection:** Role-based access control (ADMIN/SUPER_ADMIN only)
+- **Tab 1: Connected Accounts** - Manage store's social business accounts
+- **Tab 2: Post Product** - Post store products to store's social accounts
+- **Tab 3: Scheduled Posts** - Track scheduled posts across platforms
+- Shield icon and clear admin branding
 
 ## 📋 Setup Guide
 
@@ -294,37 +286,42 @@ npm run dev
 ```
 
 Visit:
-- `/auth/signin` - Test sign in
-- `/auth/signup` - Test sign up
-- `/dashboard/social` - View social dashboard
+- `/auth/signin` - Test admin sign in
+- `/auth/signup` - Test admin account creation (first user = SUPER_ADMIN)
+- `/dashboard/social` - View admin social dashboard (protected)
 
-## 🚀 Usage Examples
+## 🚀 Usage Examples (Admin Only)
 
-### Connect Instagram Account
+### Connect Store's Instagram Business Account
 ```typescript
-// User clicks "Connect Instagram"
-// Redirects to Instagram OAuth
-// After authorization, redirects back to dashboard
-// Account is stored with access tokens
+// Admin visits /auth/signin
+// Authenticates as admin (ADMIN or SUPER_ADMIN role required)
+// Goes to /dashboard/social
+// Clicks "Connect Instagram" for store's business account
+// OAuth flow to Instagram Business
+// After authorization, store's account is connected
+// Can now post store's products to store's Instagram
 ```
 
-### Post Product to Instagram
+### Post Store Product to Store's Instagram
 ```typescript
-// 1. Select product from dropdown
-// 2. Choose Instagram as platform
-// 3. Generate AI content with one click
-// 4. Post immediately or schedule
-// 5. Track engagement metrics
+// Admin selects product from store's inventory (e.g., Sunset Lamp)
+// Chooses Instagram as platform
+// Clicks "Generate with AI" for content
+// Edits content as needed
+// Clicks "Post Now" or "Schedule"
+// Product posted to store's Instagram Business account
+// Engagement metrics tracked in admin dashboard
 ```
 
 ### Schedule Posts for Multiple Platforms
 ```typescript
-// 1. Select product
-// 2. Generate AI content once
-// 3. Post to Instagram now
-// 4. Schedule same content for Facebook tomorrow
-// 5. Schedule for Pinterest in 2 days
-// 6. All posts tracked in dashboard
+// Admin selects product from store's inventory
+// Generates AI content once
+// Posts to store's Instagram now
+// Schedules same content for store's Facebook tomorrow
+// Schedules for store's Pinterest in 2 days
+// All posts tracked in admin dashboard
 ```
 
 ## 📊 Database Schema
