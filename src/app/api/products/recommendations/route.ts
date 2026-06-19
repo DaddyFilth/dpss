@@ -111,9 +111,9 @@ export async function GET(request: NextRequest) {
           category: product.category,
           price: Number(product.price),
           rating: product.rating,
-          images: parseJsonString(product.images),
-          tags: parseJsonString(product.tags),
-          aiTags: parseJsonString(product.aiTags),
+          images: Array.isArray(product.images) ? product.images : [],
+          tags: Array.isArray(product.tags) ? product.tags : [],
+          aiTags: Array.isArray(product.aiTags) ? product.aiTags : [],
           aiScore: product.aiScore ?? undefined,
         };
         recommendedProducts = await getSimilarProducts(convertedProduct, products, limit);
