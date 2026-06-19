@@ -30,26 +30,30 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Create admin user (first user becomes SUPER_ADMIN, subsequent become ADMIN)
+    const userCount = await prisma.user.count();
+    const role = userCount === 0 ? 'SUPER_ADMIN' : 'ADMIN';
+
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        role: role as any,
       },
     });
 
     return NextResponse.json(
       { 
-        message: 'User created successfully',
-        user: { id: user.id, email: user.email, name: user.name }
+        message: 'Admin account created successfully',
+        user: { id: user.id, email: user.email, name: user.name, role: user.role }
       },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json(
-      { error: 'Failed to create user' },
+      { error: 'Failed to create admin account' },
       { status: 500, headers: getSecurityHeaders() }
     );
   }

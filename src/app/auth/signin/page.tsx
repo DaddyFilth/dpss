@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Github, Chrome, Facebook, Twitter, Instagram, Pinterest } from 'lucide-react';
+import { Github, Chrome, Facebook, Twitter, Instagram, Pinterest, Shield } from 'lucide-react';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -50,9 +50,12 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Sign In to AI Dropship</CardTitle>
+          <CardTitle className="text-2xl flex items-center justify-center gap-2">
+            <Shield className="h-5 w-5 text-red-500" />
+            Admin Sign In
+          </CardTitle>
           <CardDescription>
-            Connect your accounts to sell across platforms
+            Sign in as admin to manage your store's social selling
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Chrome, Facebook, Instagram, Twitter, Pinterest, Plus, Check } from 'lucide-react';
+import { Chrome, Facebook, Instagram, Twitter, Pinterest, Plus, Check, Shield } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -27,6 +28,7 @@ interface Product {
 
 export default function SocialDashboard() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
@@ -35,11 +37,20 @@ export default function SocialDashboard() {
   const [isPosting, setIsPosting] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetchSocialAccounts();
-      fetchProducts();
+    if (session) {
+      // Check if user is admin
+      const userRole = (session.user as any)?.role;
+      if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+        router.push('/');
+        return;
+      }
+      
+      if (session.user?.id) {
+        fetchSocialAccounts();
+        fetchProducts();
+      }
     }
-  }, [session]);
+  }, [session, router]);
 
   const fetchSocialAccounts = async () => {
     try {
@@ -157,12 +168,37 @@ export default function SocialDashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
-            <CardDescription>Please sign in to access social selling features</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-red-500" />
+              Admin Login Required
+            </CardTitle>
+            <CardDescription>Please sign in as admin to access social selling features</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => window.location.href = '/auth/signin'} className="w-full">
-              Sign In
+              Admin Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const userRole = (session.user as any)?.role;
+  if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-red-500" />
+              Access Denied
+            </CardTitle>
+            <CardDescription>You need admin privileges to access this page</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => router.push('/')} className="w-full">
+              Return to Store
             </Button>
           </CardContent>
         </Card>
@@ -173,8 +209,11 @@ export default function SocialDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Social Selling Dashboard</h1>
-        <p className="text-gray-600 mb-8">Connect platforms and post products across social media</p>
+        <div className="flex items-center gap-2 mb-2">
+          <Shield className="h-6 w-6 text-blue-600" />
+          <h1 className="text-3xl font-bold">Admin Social Selling Dashboard</h1>
+        </div>
+        <p className="text-gray-600 mb-8">Manage your store's social media accounts and post products across platforms</p>
 
         <Tabs defaultValue="accounts" className="space-y-6">
           <TabsList>
@@ -187,7 +226,7 @@ export default function SocialDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Connected Social Accounts</CardTitle>
-                <CardDescription>Manage your connected platforms for selling</CardDescription>
+                <CardDescription>Manage your store's connected platforms for selling</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -257,7 +296,7 @@ export default function SocialDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Post Product to Social Media</CardTitle>
-                <CardDescription>Share your products across connected platforms</CardDescription>
+                <CardDescription>Share your store's products across connected platforms</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Shield } from 'lucide-react';
 
 export default function SignUpPage() {
   const [name, setName] = useState('');
@@ -48,7 +49,7 @@ export default function SignUpPage() {
         redirect: false,
       });
 
-      window.location.href = '/dashboard';
+      window.location.href = '/dashboard/social';
     } catch (error) {
       setError('An error occurred. Please try again.');
       setIsLoading(false);
@@ -59,9 +60,12 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create Account</CardTitle>
+          <CardTitle className="text-2xl flex items-center justify-center gap-2">
+            <Shield className="h-5 w-5 text-red-500" />
+            Create Admin Account
+          </CardTitle>
           <CardDescription>
-            Sign up to start selling across platforms
+            Sign up to manage your store's social selling
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -69,7 +73,7 @@ export default function SignUpPage() {
             <div>
               <Input
                 type="text"
-                placeholder="Name"
+                placeholder="Admin Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -78,7 +82,7 @@ export default function SignUpPage() {
             <div>
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="Admin Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -106,14 +110,14 @@ export default function SignUpPage() {
               <div className="text-sm text-red-600">{error}</div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Sign Up'}
+              {isLoading ? 'Creating admin account...' : 'Create Admin Account'}
             </Button>
           </form>
 
           <Separator />
 
           <div className="text-center text-sm text-gray-600">
-            <p>Already have an account?{' '}
+            <p>Already have an admin account?{' '}
               <a href="/auth/signin" className="text-blue-600 hover:underline">
                 Sign in
               </a>
