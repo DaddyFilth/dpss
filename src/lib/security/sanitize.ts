@@ -192,3 +192,229 @@ export const sanitizeSearchQuery = (input: string): string => {
 export const legacyEscapeStyleTags = (output: string): string => {
   return output.replace(/<\/(style)/gi, '<\\/$1');
 };
+
+/**
+ * Cookie security utilities to prevent cookie manipulation attacks
+ * Based on CVE-2024-XXXXX - cookie serialization vulnerability
+ */
+
+/**
+ * Validates cookie name to prevent cookie manipulation
+ * Prevents injection of cookie attributes through the name field
+ */
+export const validateCookieName = (name: string): boolean => {
+  if (!name || typeof name !== 'string') {
+    return false;
+  }
+  
+  // Cookie names must not contain special characters that could be used to set other fields
+  const invalidChars = /[()<>@,;:\\"\/\[\]?={}]/;
+  if (invalidChars.test(name)) {
+    return false;
+  }
+  
+  // Prevent cookie attribute injection through name
+  if (name.includes(';') || name.includes('=') || name.includes(',')) {
+    return false;
+  }
+  
+  // Limit length to prevent abuse
+  if (name.length > 256) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Sanitizes cookie name to ensure it's safe
+ */
+export const sanitizeCookieName = (name: string): string => {
+  if (!name) return '';
+  
+  // Remove any potentially dangerous characters
+  let sanitized = name.replace(/[()<>@,;:\\"\/\[\]?={}]/g, '');
+  
+  // Remove any cookie attribute keywords
+  const cookieAttributes = ['Expires', 'Max-Age', 'Domain', 'Path', 'Secure', 'HttpOnly', 'SameSite', 'Priority'];
+  cookieAttributes.forEach(attr => {
+    const regex = new RegExp(attr, 'gi');
+    sanitized = sanitized.replace(regex, '');
+  });
+  
+  // Remove special characters that could set other cookie fields
+  sanitized = sanitized.replace(/[;=,]/g, '');
+  
+  // Limit length
+  if (sanitized.length > 256) {
+    sanitized = sanitized.substring(0, 256);
+  }
+  
+  return sanitized.trim();
+};
+
+/**
+ * Validates cookie path to prevent path injection attacks
+ */
+export const validateCookiePath = (path: string): boolean => {
+  if (!path) return true; // Empty path is valid (defaults to current path)
+  
+  if (typeof path !== 'string') {
+    return false;
+  }
+  
+  // Path must start with /
+  if (!path.startsWith('/')) {
+    return false;
+  }
+  
+  // Prevent path traversal
+  if (path.includes('..')) {
+    return false;
+  }
+  
+  // Prevent injection of other cookie fields through path
+  if (/[;=]/.test(path)) {
+    return false;
+  }
+  
+  // Limit length
+  if (path.length > 256) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Sanitizes cookie path to ensure it's safe
+ */
+export const sanitizeCookiePath = (path: string): string => {
+  if (!path) return '/';
+  
+  // Remove any potentially dangerous characters
+  let sanitized = path.replace(/[;=]/g, '');
+  
+  // Ensure path starts with /
+  if (!sanitized.startsWith('/')) {
+    sanitized = '/' + sanitized;
+  }
+  
+  // Prevent path traversal
+  sanitized = sanitized.replace(/\.\./g, '');
+  
+  // Limit length
+  if (sanitized.length > 256) {
+    sanitized = sanitized.substring(0, 256);
+  }
+  
+  return sanitized;
+};
+
+/**
+ * Validates cookie domain to prevent domain injection attacks
+ */
+export const validateCookieDomain = (domain: string): boolean => {
+  if (!domain) return true; // Empty domain is valid (defaults to current domain)
+  
+  if (typeof domain !== 'string') {
+    return false;
+  }
+  
+  // Prevent injection of other cookie fields through domain
+  if (/[;=]/.test(domain)) {
+    return false;
+  }
+  
+  // Basic domain format validation
+  const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])*$/;
+  if (!domainRegex.test(domain)) {
+    return false;
+  }
+  
+  // Limit length
+  if (domain.length > 253) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Sanitizes cookie domain to ensure it's safe
+ */
+export const sanitizeCookieDomain = (domain: string): string => {
+  if (!domain) return '';
+  
+  // Remove any potentially dangerous characters
+  let sanitized = domain.replace(/[;=]/g, '');
+  
+  // Remove leading/trailing dots
+  sanitized = sanitized.replace(/^\.+|\.+$/g, '');
+  
+  // Limit length
+  if (sanitized.length > 253) {
+    sanitized = sanitized.substring(0, 253);
+  }
+  
+  return sanitized.toLowerCase();
+};
+
+/**
+ * Validates complete cookie configuration for security
+ */
+export const validateCookieConfig = (config: {
+  name?: string;
+  value?: string;
+  path?: string;
+  domain?: string;
+}): boolean => {
+  if (config.name && !validateCookieName(config.name)) {
+    return false;
+  }
+  
+  if (config.path && !validateCookiePath(config.path)) {
+    return false;
+  }
+  
+  if (config.domain && !validateCookieDomain(config.domain)) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Sanitizes complete cookie configuration
+ */
+export const sanitizeCookieConfig = (config: {
+  name?: string;
+  value?: string;
+  path?: string;
+  domain?: string;
+}): {
+  name?: string;
+  value?: string;
+  path?: string;
+  domain?: string;
+} => {
+  const sanitized: any = {};
+  
+  if (config.name) {
+    sanitized.name = sanitizeCookieName(config.name);
+  }
+  
+  if (config.value) {
+    sanitized.value = sanitizeHtml(config.value); // Use existing HTML sanitization
+  }
+  
+  if (config.path) {
+    sanitized.path = sanitizeCookiePath(config.path);
+  }
+  
+  if (config.domain) {
+    sanitized.domain = sanitizeCookieDomain(config.domain);
+  }
+  
+  return sanitized;
+};
