@@ -56,3 +56,5 @@ prisma/migrations/
 *.key
 *.pem
 secrets/
+# Kimi project memory
+.kimi-memory/
