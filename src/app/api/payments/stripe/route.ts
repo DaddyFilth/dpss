@@ -1,0 +1,74 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createPaymentIntent, confirmPayment } from '@/lib/payments/stripe';
+import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/auth.config';
+import { z } from 'zod';
+
+const paymentSchema = z.object({
+  amount: z.number().positive(),
+  currency: z.string().default('USD'),
+  metadata: z.record(z.string(), z.string()).optional(),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    // Require authentication
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401, headers: getSecurityHeaders() }
+      );
+    }
+
+    // Rate limiting
+    const ip = getClientIP(request);
+    const rateLimitResult = await rateLimit(ip, 'stripe-payment', 10, 3600000);
+    
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many payment attempts' },
+        { status: 429, headers: getSecurityHeaders() }
+      );
+    }
+
+    const body = await request.json();
+    
+    // Validate input
+    const validationResult = paymentSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validationResult.error.issues },
+        { status: 400, headers: getSecurityHeaders() }
+      );
+    }
+
+    const { amount, currency, metadata } = validationResult.data;
+
+    // Add user ID to metadata
+    const enhancedMetadata = {
+      ...metadata,
+      userId: (session.user as any).id,
+    };
+
+    const result = await createPaymentIntent({
+      amount,
+      currency,
+      metadata: enhancedMetadata,
+    });
+
+    return NextResponse.json(
+      result,
+      { headers: getSecurityHeaders() }
+    );
+  } catch (error) {
+    console.error('Stripe payment intent error:', error);
+    return NextResponse.json(
+      { error: 'Failed to create payment intent' },
+      { status: 500, headers: getSecurityHeaders() }
+    );
+  }
+}
