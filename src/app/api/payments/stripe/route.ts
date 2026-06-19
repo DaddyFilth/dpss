@@ -4,11 +4,13 @@ import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { z } from 'zod';
+import { prisma } from '@/lib/utils/prisma';
 
 const paymentSchema = z.object({
   amount: z.number().positive(),
   currency: z.string().default('USD'),
   metadata: z.record(z.string(), z.string()).optional(),
+  orderId: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -46,13 +48,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { amount, currency, metadata } = validationResult.data;
+    const { amount, currency, metadata, orderId } = validationResult.data;
 
     // Add user ID to metadata
-    const enhancedMetadata = {
+    const enhancedMetadata: Record<string, string> = {
       ...metadata,
       userId: (session.user as any).id,
     };
+
+    // If orderId is provided, validate it belongs to the user
+    if (orderId) {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+      });
+
+      if (!order || order.userId !== (session.user as any).id) {
+        return NextResponse.json(
+          { error: 'Invalid order ID' },
+          { status: 400, headers: getSecurityHeaders() }
+        );
+      }
+
+      enhancedMetadata.orderId = orderId;
+    }
 
     const result = await createPaymentIntent({
       amount,
