@@ -53,11 +53,18 @@ Visit http://localhost:3000 to see your dropshipping store!
 
 Your store comes pre-configured with:
 
-### Products (10 Dropshipping Products):
+### Products (63 Dropshipping Products):
 - **Custom Apparel**: Premium T-Shirts, Hoodies (with custom printing)
 - **Home Decor**: Canvas Prints, Posters, Throw Pillows
-- **Accessories**: Phone Cases, Tote Bags, Coffee Mugs
-- **Electronics**: Wireless Chargers, Bluetooth Earbuds
+- **Accessories**: Phone Cases, Tote Bags, Coffee Mugs, Watches, Backpacks
+- **Electronics**: 23 popular electronics including smart watches, gaming gear, audio equipment
+- **Beauty**: LED mirrors, makeup brushes, skincare products
+- **Pet Supplies**: Orthopedic beds, grooming tools, toys
+- **Home & Kitchen**: Organizers, gadgets, appliances
+- **Baby Products**: Monitors, carriers
+- **Automotive**: Phone mounts, LED lights
+- **Fitness**: Equipment, resistance bands, yoga gear
+- **Health**: Massage devices, posture correctors
 
 ### Features:
 - ✅ Shopping cart with quantity management

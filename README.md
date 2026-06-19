@@ -109,11 +109,18 @@ For a detailed quick start guide, see [SETUP_GUIDE.md](SETUP_GUIDE.md). This inc
 - Printful integration setup
 - Payment gateway configuration
 
-The database seed includes 10 real dropshipping products with:
+The database seed includes 63 real dropshipping products with:
 - Custom apparel (t-shirts, hoodies)
 - Home decor (canvas prints, posters, pillows)
-- Accessories (phone cases, tote bags, mugs)
-- Electronics (chargers, earbuds)
+- Accessories (phone cases, tote bags, mugs, watches, backpacks)
+- Electronics (23 items: smart watches, gaming gear, audio equipment, chargers)
+- Beauty (LED mirrors, makeup brushes, skincare)
+- Pet supplies (orthopedic beds, grooming tools, toys)
+- Home & kitchen (organizers, gadgets, appliances)
+- Baby products (monitors, carriers)
+- Automotive (phone mounts, LED lights)
+- Fitness (equipment, resistance bands, yoga gear)
+- Health (massage devices, posture correctors)
 
 ## 🏗️ Project Structure
 
