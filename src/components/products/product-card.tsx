@@ -3,7 +3,7 @@
 import { Product } from '@/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Heart, Star } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Palette } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils/cn';
 import { useCart } from '@/lib/cart/cart-context';
@@ -12,9 +12,10 @@ interface ProductCardProps {
   product: Product;
   onAddToCart?: (productId: string) => void;
   onAddToWishlist?: (productId: string) => void;
+  showCustomize?: boolean;
 }
 
-export const ProductCard = ({ product, onAddToCart, onAddToWishlist }: ProductCardProps) => {
+export const ProductCard = ({ product, onAddToCart, onAddToWishlist, showCustomize = false }: ProductCardProps) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageError, setImageError] = useState(false);
   const { addToCart } = useCart();
@@ -30,6 +31,11 @@ export const ProductCard = ({ product, onAddToCart, onAddToWishlist }: ProductCa
     if (onAddToCart) {
       onAddToCart(product.id);
     }
+  };
+
+  const handleCustomize = () => {
+    // Navigate to customization page
+    window.location.href = `/products/${product.id}/customize`;
   };
 
   const handleWishlist = () => {
@@ -118,14 +124,26 @@ export const ProductCard = ({ product, onAddToCart, onAddToWishlist }: ProductCa
       </CardContent>
       
       <CardFooter className="p-4 pt-0">
-        <Button
-          onClick={handleAddToCart}
-          className="w-full"
-          disabled={product.stock === 0}
-        >
-          <ShoppingCart className="mr-2" size={18} />
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </Button>
+        <div className="flex gap-2">
+          {showCustomize && (
+            <Button
+              onClick={handleCustomize}
+              className="flex-1"
+              variant="outline"
+            >
+              <Palette className="mr-2 h-4 w-4" />
+              Customize
+            </Button>
+          )}
+          <Button
+            onClick={handleAddToCart}
+            className={showCustomize ? "flex-1" : "w-full"}
+            disabled={product.stock === 0}
+          >
+            <ShoppingCart className="mr-2" size={18} />
+            {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

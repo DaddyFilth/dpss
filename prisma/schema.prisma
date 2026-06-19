@@ -98,17 +98,28 @@ model Product {
   reviewsCount Int     @default(0)
   aiScore     Float?   // AI recommendation score
   aiTags      String[] // AI-generated tags
+  
+  // Customization support
+  customizable Boolean  @default(false)
+  customizationConfig Json? // Configuration for customization options (text, images, etc.)
+  
+  printingSourceId String?
+  printingSource  PrintingSource? @relation(fields: [printingSourceId], references: [id])
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  orderItems  OrderItem[]
-  reviews     Review[]
-  wishlist    WishlistItem[]
-  cartItems   CartItem[]
+  orderItems         OrderItem[]
+  reviews            Review[]
+  wishlist           WishlistItem[]
+  cartItems          CartItem[]
+  customizations     ProductCustomization[]
 
   @@index([category])
   @@index([featured])
   @@index([sku])
+  @@index([customizable])
+  @@index([printingSourceId])
 }
 
 // Shopping cart
@@ -191,8 +202,14 @@ model OrderItem {
   productId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+  
+  // Customization data
+  customizationData Json? // Store user's custom design/text/images
+  customizationCost Decimal @db.Decimal(10, 2) @default(0)
+  
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
+  printOrder PrintOrder?
 
   @@index([orderId])
   @@index([productId])
@@ -246,4 +263,116 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+// Printing sources (dropshipping printing partners)
+enum PrintSourceStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum PrintSourceProvider {
+  PRINTFUL
+  GOOTEN
+  PRINTIFY
+  CUSTOM
+  LOCAL
+}
+
+model PrintingSource {
+  id        String              @id @default(cuid())
+  name      String
+  apiKey    String?             // API key for the service
+  apiSecret String?             // API secret for the service
+  provider  PrintSourceProvider
+  status    PrintSourceStatus   @default(ACTIVE)
+  
+  // API configuration
+  apiUrl    String?
+  webhookUrl String?
+  
+  // Pricing configuration
+  basePrice  Decimal? @db.Decimal(10, 2)
+  markup    Decimal? @db.Decimal(10, 2) @default(0)
+  
+  // Production times
+  productionDays Int @default(3)
+  shippingDays   Int @default(5)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  products Product[]
+  printOrders PrintOrder[]
+
+  @@index([provider])
+  @@index([status])
+}
+
+// Product customization templates
+model ProductCustomization {
+  id        String   @id @default(cuid())
+  productId String
+  name      String
+  type      String   // "text", "image", "color", "size", etc.
+  
+  // Customization options
+  options   Json?    // Array of available options
+  required  Boolean  @default(false)
+  maxChars  Int?     // For text fields
+  maxFiles  Int?     // For image uploads
+  price     Decimal? @db.Decimal(10, 2) // Additional cost for customization
+  
+  // Template design
+  template  Json?    // Design template/config
+  previewImage String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name])
+  @@index([productId])
+  @@index([type])
+}
+
+// Print orders sent to printing sources
+enum PrintOrderStatus {
+  PENDING
+  PROCESSING
+  PRINTED
+  SHIPPED
+  FAILED
+  CANCELLED
+}
+
+model PrintOrder {
+  id               String           @id @default(cuid())
+  orderItemId      String           @unique
+  printingSourceId String
+  orderItem        OrderItem        @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  printingSource   PrintingSource   @relation(fields: [printingSourceId], references: [id])
+  
+  // Print order data
+  printFileUrl     String?          // URL of the print-ready file
+  printSpecs       Json?            // Print specifications (size, material, etc.)
+  
+  // Status tracking
+  status           PrintOrderStatus @default(PENDING)
+  trackingNumber   String?
+  estimatedDelivery DateTime?
+  
+  // Error handling
+  errorMessage     String?
+  retryCount       Int              @default(0)
+  lastRetryAt      DateTime?
+  
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  
+  @@index([orderItemId])
+  @@index([printingSourceId])
+  @@index([status])
 }

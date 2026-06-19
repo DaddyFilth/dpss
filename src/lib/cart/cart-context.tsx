@@ -2,19 +2,33 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+export interface CustomizationData {
+  customText?: string;
+  customImage?: string[];
+  customColors?: string[];
+  material?: string;
+  size?: string;
+  quality?: string;
+  printMethod?: string;
+  files?: File[];
+}
+
 export interface CartItem {
   id: string;
   name: string;
   price: number;
   quantity: number;
   image: string;
+  customization?: CustomizationData;
+  customizationCost?: number;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: { id: string; name: string; price: number; image: string }) => void;
+  addToCart: (product: { id: string; name: string; price: number; image: string }, customization?: CustomizationData) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  updateCustomization: (id: string, customization: CustomizationData) => void;
   clearCart: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
@@ -46,7 +60,41 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items, mounted]);
 
-  const addToCart = (product: { id: string; name: string; price: number; image: string }) => {
+  const calculateCustomizationCost = (customization?: CustomizationData): number => {
+    if (!customization) return 0;
+    
+    let cost = 0;
+    
+    if (customization.customText?.length > 0) {
+      cost += 5;
+    }
+    
+    if (customization.customImage?.length > 0) {
+      cost += 10 * customization.customImage.length;
+    }
+    
+    if (customization.customColors?.length > 0) {
+      cost += 3;
+    }
+    
+    if (customization.material === 'premium') {
+      cost += 10;
+    } else if (customization.material === 'luxury') {
+      cost += 25;
+    }
+    
+    if (customization.quality === 'high') {
+      cost += 8;
+    } else if (customization.quality === 'premium') {
+      cost += 15;
+    }
+    
+    return cost;
+  };
+
+  const addToCart = (product: { id: string; name: string; price: number; image: string }, customization?: CustomizationData) => {
+    const customizationCost = calculateCustomizationCost(customization);
+    
     setItems((currentItems) => {
       const existingItem = currentItems.find((item) => item.id === product.id);
       if (existingItem) {
@@ -56,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      return [...currentItems, { ...product, quantity: 1 }];
+      return [...currentItems, { ...product, quantity: 1, customization, customizationCost }];
     });
   };
 
@@ -75,13 +123,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
       )
     );
   };
+  
+  const updateCustomization = (id: string, customization: CustomizationData) => {
+    const customizationCost = calculateCustomizationCost(customization);
+    setItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === id ? { ...item, customization, customizationCost } : item
+      )
+    );
+  };
 
   const clearCart = () => {
     setItems([]);
   };
 
   const getCartTotal = () => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+    return items.reduce((total, item) => total + (item.price + (item.customizationCost || 0)) * item.quantity, 0);
   };
 
   const getCartCount = () => {
@@ -95,6 +152,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addToCart,
         removeFromCart,
         updateQuantity,
+        updateCustomization,
         clearCart,
         getCartTotal,
         getCartCount,
