@@ -15,6 +15,7 @@ export default function AutomationDashboard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [schedulerRunning, setSchedulerRunning] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (session) {
@@ -41,84 +42,136 @@ export default function AutomationDashboard() {
   };
 
   const toggleLeadCapture = async (id: string, active: boolean) => {
+    setActionLoading(`toggle-${id}`);
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'toggle-automation', type: 'capture', id, active }),
       });
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to toggle automation');
+      }
     } catch (error) {
       console.error('Failed to toggle automation:', error);
+      alert('Failed to toggle automation');
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const toggleEmailAutomation = async (id: string, active: boolean) => {
+    setActionLoading(`toggle-${id}`);
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'toggle-automation', type: 'email', id, active }),
       });
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to toggle automation');
+      }
     } catch (error) {
       console.error('Failed to toggle email automation:', error);
+      alert('Failed to toggle automation');
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const toggleSocialAutomation = async (id: string, active: boolean) => {
+    setActionLoading(`toggle-${id}`);
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'toggle-automation', type: 'social', id, active }),
       });
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to toggle automation');
+      }
     } catch (error) {
       console.error('Failed to toggle social automation:', error);
+      alert('Failed to toggle automation');
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const toggleSchedulerTask = async (taskId: string, active: boolean) => {
+    setActionLoading(`toggle-task-${taskId}`);
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'toggle-scheduler-task', taskId, active }),
       });
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to toggle scheduler task');
+      }
     } catch (error) {
       console.error('Failed to toggle scheduler task:', error);
+      alert('Failed to toggle scheduler task');
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const triggerTask = async (taskId: string) => {
+    setActionLoading(`trigger-${taskId}`);
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'trigger-task', taskId }),
       });
-      alert('Task triggered successfully');
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        alert('Task triggered successfully');
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to trigger task');
+      }
     } catch (error) {
       console.error('Failed to trigger task:', error);
       alert('Failed to trigger task');
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const toggleScheduler = async (running: boolean) => {
+    setActionLoading('scheduler');
     try {
-      await fetch('/api/automation', {
+      const response = await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: running ? 'start-scheduler' : 'stop-scheduler' }),
       });
-      setSchedulerRunning(running);
-      fetchAutomationData();
+      const result = await response.json();
+      if (result.success) {
+        setSchedulerRunning(running);
+        await fetchAutomationData();
+      } else {
+        alert(result.error || 'Failed to toggle scheduler');
+      }
     } catch (error) {
       console.error('Failed to toggle scheduler:', error);
       alert('Failed to toggle scheduler');
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -196,8 +249,11 @@ export default function AutomationDashboard() {
             <Button 
               onClick={() => toggleScheduler(!schedulerRunning)}
               variant={schedulerRunning ? 'destructive' : 'default'}
+              disabled={actionLoading === 'scheduler'}
             >
-              {schedulerRunning ? (
+              {actionLoading === 'scheduler' ? (
+                'Processing...'
+              ) : schedulerRunning ? (
                 <>
                   <Pause className="h-4 w-4 mr-2" />
                   Stop Scheduler
@@ -308,6 +364,7 @@ export default function AutomationDashboard() {
                     <Switch
                       checked={capture.active}
                       onCheckedChange={(checked) => toggleLeadCapture(capture.id, checked)}
+                      disabled={actionLoading?.includes(capture.id)}
                     />
                   </div>
                 ))}
@@ -347,6 +404,7 @@ export default function AutomationDashboard() {
                     <Switch
                       checked={automation.active}
                       onCheckedChange={(checked) => toggleEmailAutomation(automation.id, checked)}
+                      disabled={actionLoading?.includes(automation.id)}
                     />
                   </div>
                 ))}
@@ -387,6 +445,7 @@ export default function AutomationDashboard() {
                     <Switch
                       checked={automation.active}
                       onCheckedChange={(checked) => toggleSocialAutomation(automation.id, checked)}
+                      disabled={actionLoading?.includes(automation.id)}
                     />
                   </div>
                 ))}
@@ -426,13 +485,15 @@ export default function AutomationDashboard() {
                       <Switch
                         checked={task.active}
                         onCheckedChange={(checked) => toggleSchedulerTask(task.id, checked)}
+                        disabled={actionLoading?.includes(task.id)}
                       />
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => triggerTask(task.id)}
+                        disabled={actionLoading?.includes(task.id)}
                       >
-                        Run Now
+                        {actionLoading?.includes(task.id) ? 'Running...' : 'Run Now'}
                       </Button>
                     </div>
                   </div>

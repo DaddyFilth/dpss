@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     if (section === 'all' || section === 'leads') {
       data.leadStats = automatedLeadGeneration.getLeadStats();
-      data.leads = automatedLeadGeneration.getLeads().slice(0, 50); // Last 50 leads
+      data.leads = automatedLeadGeneration.getLeads().slice(0, 50);
       data.leadCaptures = automatedLeadGeneration.getLeadCaptures();
       data.emailAutomations = automatedLeadGeneration.getEmailAutomations();
     }
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Automation API error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch automation data' },
+      { error: 'Failed to fetch automation data', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500, headers: getSecurityHeaders() }
     );
   }
@@ -73,6 +73,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { action, ...params } = body;
+
+    console.log('Automation action:', action, params);
 
     let result: any = {};
 
@@ -110,19 +112,19 @@ export async function POST(request: NextRequest) {
         } else if (params.type === 'social') {
           automatedSocialMedia.toggleAutomation(params.id, params.active);
         }
-        result = { success: true };
+        result = { success: true, message: `Automation ${params.id} toggled to ${params.active}` };
         break;
 
       case 'trigger-task':
         const scheduler = getAutomationScheduler();
         await scheduler.triggerTask(params.taskId);
-        result = { success: true };
+        result = { success: true, message: `Task ${params.taskId} triggered` };
         break;
 
       case 'toggle-scheduler-task':
         const sched = getAutomationScheduler();
         sched.toggleTask(params.taskId, params.active);
-        result = { success: true };
+        result = { success: true, message: `Scheduler task ${params.taskId} toggled to ${params.active}` };
         break;
 
       case 'start-scheduler':
@@ -136,7 +138,10 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        throw new Error(`Unknown action: ${action}`);
+        return NextResponse.json(
+          { error: `Unknown action: ${action}` },
+          { status: 400, headers: getSecurityHeaders() }
+        );
     }
 
     return NextResponse.json(
@@ -146,7 +151,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Automation action error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to perform action' },
+      { error: error instanceof Error ? error.message : 'Failed to perform action', details: error instanceof Error ? error.stack : undefined },
       { status: 500, headers: getSecurityHeaders() }
     );
   }
