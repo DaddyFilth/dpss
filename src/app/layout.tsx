@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Analytics } from "@vercel/analytics/next";
 import { CartProviderWrapper } from "@/components/providers/cart-provider";
+import { AIChatbot } from "@/components/ai/chatbot-widget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,6 +90,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <Analytics />
+          <AIChatbot />
         </CartProviderWrapper>
       </body>
     </html>
