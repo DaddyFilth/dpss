@@ -47,7 +47,7 @@ A secure, AI-powered dropshipping e-commerce platform built with Next.js 16, Typ
 ## 📋 Prerequisites
 
 - Node.js 20 or higher
-- PostgreSQL database
+- Neon PostgreSQL database (or any PostgreSQL database)
 - Stripe account (for payments)
 - PayPal account (for payments)
 - OpenAI API key (for AI features - optional)
@@ -65,28 +65,35 @@ A secure, AI-powered dropshipping e-commerce platform built with Next.js 16, Typ
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Set up Neon database**
+   - Go to [neon.tech](https://neon.tech) and create a free account
+   - Create a new project and copy the connection string
+   - Format: `postgresql://[user]:[password]@[neon-host]/[database]?sslmode=require`
+
+4. **Set up environment variables**
    ```bash
    cp .env.example .env
    ```
    Edit `.env` and add your configuration:
    ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/dropship_db"
+   DATABASE_URL="postgresql://[user]:[password]@[neon-host]/[database]?sslmode=require"
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-super-secret-key-min-32-chars"
-   STRIPE_PUBLIC_KEY="pk_test_..."
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
    STRIPE_SECRET_KEY="sk_test_..."
+   STRIPE_WEBHOOK_SECRET="whsec_..."
    PAYPAL_CLIENT_ID="your_paypal_client_id"
    PAYPAL_CLIENT_SECRET="your_paypal_client_secret"
+   OPENAI_API_KEY="sk-..." (optional)
    ```
 
-4. **Set up the database**
+5. **Set up the database**
    ```bash
    npx prisma generate
    npx prisma db push
    ```
 
-5. **Run the development server**
+6. **Run the development server**
    ```bash
    npm run dev
    ```
@@ -155,23 +162,47 @@ dropship-ai/
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Vercel + Neon (Recommended)
 
-The easiest way to deploy is using Vercel:
+The easiest way to deploy is using Vercel with Neon database:
 
-1. **Push your code to GitHub**
-2. **Import your repository in Vercel**
-3. **Add environment variables** in Vercel dashboard:
-   - `DATABASE_URL`
-   - `NEXTAUTH_URL`
-   - `NEXTAUTH_SECRET`
-   - `STRIPE_PUBLIC_KEY`
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_WEBHOOK_SECRET`
-   - `PAYPAL_CLIENT_ID`
-   - `PAYPAL_CLIENT_SECRET`
-   - `PAYPAL_MODE`
-4. **Deploy** - Vercel will automatically build and deploy
+1. **Set up Neon database**
+   - Go to [neon.tech](https://neon.tech) and create a project
+   - Copy your database connection string
+   - Enable Vercel integration in Neon (optional)
+
+2. **Push your code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+3. **Import your repository in Vercel**
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import your GitHub repository: `DaddyFilth/dpss`
+
+4. **Add environment variables** in Vercel dashboard:
+   - `DATABASE_URL` - Your Neon connection string with SSL mode
+   - `NEXTAUTH_URL` - Your Vercel app URL
+   - `NEXTAUTH_SECRET` - NextAuth secret key
+   - `ENCRYPTION_KEY` - 32-character encryption key
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key
+   - `STRIPE_SECRET_KEY` - Stripe secret key
+   - `STRIPE_WEBHOOK_SECRET` - Stripe webhook secret
+   - `OPENAI_API_KEY` - OpenAI API key (optional)
+
+5. **Configure build settings**
+   - Build command: `prisma generate && next build` (automatic)
+   - The postinstall script will generate Prisma client automatically
+
+6. **Deploy** - Vercel will automatically build and deploy
+
+7. **Configure Stripe webhooks**
+   - Go to Stripe Dashboard → Webhooks
+   - Add endpoint: `https://your-app.vercel.app/api/payments/stripe/webhook`
+   - Select events: `checkout.session.completed`, `payment_intent.succeeded`, etc.
+   - Copy webhook secret to Vercel environment variables
 
 ### Other Platforms
 
@@ -240,17 +271,18 @@ npm run type-check
 
 See `.env.example` for all required environment variables:
 
-- `DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_URL` - NextAuth.js URL
-- `NEXTAUTH_SECRET` - NextAuth.js secret key
+- `DATABASE_URL` - Neon PostgreSQL connection string with SSL mode: `postgresql://[user]:[password]@[neon-host]/[database]?sslmode=require`
+- `NEXTAUTH_URL` - NextAuth.js URL (your app URL)
+- `NEXTAUTH_SECRET` - NextAuth.js secret key (min 32 characters)
 - `ENCRYPTION_KEY` - 32-character encryption key
-- `STRIPE_PUBLIC_KEY` - Stripe publishable key
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key
 - `STRIPE_SECRET_KEY` - Stripe secret key
 - `STRIPE_WEBHOOK_SECRET` - Stripe webhook secret
-- `PAYPAL_CLIENT_ID` - PayPal client ID
-- `PAYPAL_CLIENT_SECRET` - PayPal client secret
-- `PAYPAL_MODE` - sandbox or live
-- `OPENAI_API_KEY` - OpenAI API key (optional)
+- `PAYPAL_CLIENT_ID` - PayPal client ID (optional)
+- `PAYPAL_CLIENT_SECRET` - PayPal client secret (optional)
+- `PAYPAL_MODE` - sandbox or live (optional)
+- `OPENAI_API_KEY` - OpenAI API key for AI features (optional)
+- `NEXT_PUBLIC_APP_URL` - Your app URL
 
 ## 🤝 Contributing
 
