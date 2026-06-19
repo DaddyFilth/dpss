@@ -1,0 +1,17 @@
+{
+  "DATABASE_URL": "postgresql://user:password@host:5432/database_name",
+  "NEXTAUTH_URL": "https://your-project.vercel.app",
+  "NEXTAUTH_SECRET": "Nkpzluw9/OPKFTy42ICjqwOB/4BAetxexxu1XLCXfDs=",
+  "ENCRYPTION_KEY": "b9GtmZrFHDPUiDKC3hvagvTRrcwwNmRM",
+  "RATE_LIMIT_MAX_REQUESTS": "100",
+  "RATE_LIMIT_WINDOW_MS": "900000",
+  "STRIPE_PUBLIC_KEY": "pk_test_your_stripe_publishable_key",
+  "STRIPE_SECRET_KEY": "sk_test_your_stripe_secret_key",
+  "STRIPE_WEBHOOK_SECRET": "whsec_your_stripe_webhook_secret",
+  "PAYPAL_CLIENT_ID": "your_paypal_client_id",
+  "PAYPAL_CLIENT_SECRET": "your_paypal_client_secret",
+  "PAYPAL_MODE": "sandbox",
+  "OPENAI_API_KEY": "your_openai_api_key_for_recommendations",
+  "NODE_ENV": "production",
+  "NEXT_PUBLIC_APP_URL": "https://your-project.vercel.app"
+}
