@@ -56,6 +56,31 @@ export async function POST(request: NextRequest) {
       userId: (session.user as any).id,
     };
 
+    // Get or create Stripe customer
+    const user = await prisma.user.findUnique({
+      where: { id: (session.user as any).id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        stripeCustomerId: true,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404, headers: getSecurityHeaders() }
+      );
+    }
+
+    const { getOrCreateCustomer } = await import('@/lib/payments/stripe');
+    const customerResult = await getOrCreateCustomer(
+      user.id,
+      user.email,
+      user.name || undefined
+    );
+
     // If orderId is provided, validate it belongs to the user
     if (orderId) {
       const order = await prisma.order.findUnique({
@@ -72,10 +97,13 @@ export async function POST(request: NextRequest) {
       enhancedMetadata.orderId = orderId;
     }
 
+    enhancedMetadata.customerId = customerResult.customerId;
+
     const result = await createPaymentIntent({
       amount,
       currency,
       metadata: enhancedMetadata,
+      customerId: customerResult.customerId,
     });
 
     return NextResponse.json(

@@ -22,16 +22,23 @@ interface CustomerInput {
   metadata?: Record<string, string>;
 }
 
-export const createPaymentIntent = async (input: PaymentIntentInput) => {
+export const createPaymentIntent = async (input: PaymentIntentInput & { customerId?: string }) => {
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntentParams: any = {
       amount: Math.round(input.amount * 100), // Convert to cents
       currency: input.currency.toLowerCase(),
       metadata: input.metadata,
       automatic_payment_methods: {
         enabled: true,
       },
-    });
+    };
+
+    // Add customer if provided
+    if (input.customerId) {
+      paymentIntentParams.customer = input.customerId;
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
 
     return {
       clientSecret: paymentIntent.client_secret,
@@ -79,6 +86,129 @@ export const createCustomer = async (input: CustomerInput) => {
   } catch (error) {
     console.error('Stripe customer creation error:', error);
     throw new Error('Failed to create customer');
+  }
+};
+
+export const getOrCreateCustomer = async (userId: string, email: string, name?: string) => {
+  try {
+    // Check if user already has a Stripe customer ID
+    const { prisma } = await import('@/lib/utils/prisma');
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { stripeCustomerId: true },
+    });
+
+    if (user?.stripeCustomerId) {
+      // Retrieve existing customer
+      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      return {
+        customerId: user.stripeCustomerId,
+        customer,
+        created: false,
+      };
+    }
+
+    // Create new customer
+    const newCustomer = await stripe.customers.create({
+      email,
+      name: name || email,
+      metadata: {
+        userId,
+      },
+    });
+
+    // Update user with Stripe customer ID
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        stripeCustomerId: newCustomer.id,
+      },
+    });
+
+    return {
+      customerId: newCustomer.id,
+      customer: newCustomer,
+      created: true,
+    };
+  } catch (error) {
+    console.error('Stripe get or create customer error:', error);
+    throw new Error('Failed to get or create customer');
+  }
+};
+
+export const updateCustomer = async (customerId: string, updates: {
+  name?: string;
+  email?: string;
+  metadata?: Record<string, string>;
+}) => {
+  try {
+    const customer = await stripe.customers.update(customerId, updates);
+    return {
+      customerId: customer.id,
+      customer,
+    };
+  } catch (error) {
+    console.error('Stripe customer update error:', error);
+    throw new Error('Failed to update customer');
+  }
+};
+
+export const getCustomer = async (customerId: string) => {
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    return customer;
+  } catch (error) {
+    console.error('Stripe customer retrieval error:', error);
+    throw new Error('Failed to retrieve customer');
+  }
+};
+
+export const listCustomerPaymentMethods = async (customerId: string) => {
+  try {
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+    });
+    return paymentMethods;
+  } catch (error) {
+    console.error('Stripe payment methods list error:', error);
+    throw new Error('Failed to list payment methods');
+  }
+};
+
+export const attachPaymentMethod = async (paymentMethodId: string, customerId: string) => {
+  try {
+    const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: customerId,
+    });
+    return paymentMethod;
+  } catch (error) {
+    console.error('Stripe payment method attach error:', error);
+    throw new Error('Failed to attach payment method');
+  }
+};
+
+export const detachPaymentMethod = async (paymentMethodId: string) => {
+  try {
+    const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
+    return paymentMethod;
+  } catch (error) {
+    console.error('Stripe payment method detach error:', error);
+    throw new Error('Failed to detach payment method');
+  }
+};
+
+export const setDefaultPaymentMethod = async (customerId: string, paymentMethodId: string) => {
+  try {
+    const customer = await stripe.customers.update(customerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+    return customer;
+  } catch (error) {
+    console.error('Stripe set default payment method error:', error);
+    throw new Error('Failed to set default payment method');
   }
 };
 
