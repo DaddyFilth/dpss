@@ -35,6 +35,7 @@ model User {
   cart          Cart?
   reviews       Review[]
   wishlist      WishlistItem[]
+  socialAccounts SocialAccount[]
 
   @@index([email])
   @@index([role])
@@ -80,6 +81,62 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// Social accounts for multi-platform posting
+model SocialAccount {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String   // google, facebook, instagram, twitter, pinterest
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  profile           Json?    // Store profile data
+  expiresAt         DateTime?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialPosts SocialPost[]
+
+  @@unique([userId, provider])
+  @@index([userId])
+  @@index([provider])
+}
+
+// Social media posts for products
+enum SocialPostStatus {
+  SCHEDULED
+  POSTED
+  FAILED
+  PENDING
+}
+
+model SocialPost {
+  id          String          @id @default(cuid())
+  productId   String
+  accountId   String
+  platform    String          // instagram, facebook, twitter, pinterest
+  content     String
+  imageUrl    String?         // Post image URL
+  status      SocialPostStatus @default(PENDING)
+  externalId  String?         // Platform's post ID
+  metrics     Json?           // Engagement metrics (likes, shares, etc.)
+  scheduledAt DateTime?
+  postedAt    DateTime?
+  error       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  socialAccount SocialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([accountId])
+  @@index([platform])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
 // Product catalog
 model Product {
   id          String   @id @default(cuid())
@@ -114,6 +171,7 @@ model Product {
   wishlist           WishlistItem[]
   cartItems          CartItem[]
   customizations     ProductCustomization[]
+  socialPosts        SocialPost[]
 
   @@index([category])
   @@index([featured])

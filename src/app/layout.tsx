@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Analytics } from "@vercel/analytics/next";
 import { CartProviderWrapper } from "@/components/providers/cart-provider";
+import { SessionProvider } from "@/components/providers/session-provider";
 import { AIChatbot } from "@/components/ai/chatbot-widget";
 
 const geistSans = Geist({
@@ -85,13 +86,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <CartProviderWrapper>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Analytics />
-          <AIChatbot />
-        </CartProviderWrapper>
+        <SessionProvider>
+          <CartProviderWrapper>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Analytics />
+            <AIChatbot />
+          </CartProviderWrapper>
+        </SessionProvider>
       </body>
     </html>
   );
