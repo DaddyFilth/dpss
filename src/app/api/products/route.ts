@@ -3,6 +3,7 @@ import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
+import { parseJsonString, toJsonString } from '@/lib/utils/json';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,6 +44,9 @@ export async function GET(request: NextRequest) {
         ...p,
         price: Number(p.price),
         comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
+        images: parseJsonString(p.images),
+        tags: parseJsonString(p.tags),
+        aiTags: parseJsonString(p.aiTags),
         aiScore: p.aiScore ?? undefined,
       }))),
       prisma.product.count({ where }),
@@ -107,9 +111,9 @@ export async function POST(request: NextRequest) {
         price: parseFloat(price),
         comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
         image,
-        images: body.images || [image],
+        images: toJsonString(body.images || [image]),
         category,
-        tags: body.tags || [],
+        tags: toJsonString(body.tags || []),
         stock: body.stock || 0,
         sku,
         featured: body.featured || false,
@@ -118,6 +122,9 @@ export async function POST(request: NextRequest) {
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
+      images: parseJsonString(p.images),
+      tags: parseJsonString(p.tags),
+      aiTags: parseJsonString(p.aiTags),
       aiScore: p.aiScore ?? undefined,
     }));
 

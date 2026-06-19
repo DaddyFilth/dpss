@@ -4,6 +4,7 @@ import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { z } from 'zod';
+import { parseJsonString, toJsonString } from '@/lib/utils/json';
 
 const productUpdateSchema = z.object({
   name: z.string().min(1).optional(),
@@ -47,7 +48,15 @@ export async function GET(
     }
 
     return NextResponse.json(
-      { product: { ...product, price: Number(product.price) } },
+      { product: { 
+        ...product, 
+        price: Number(product.price),
+        comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
+        images: parseJsonString(product.images),
+        tags: parseJsonString(product.tags),
+        aiTags: parseJsonString(product.aiTags),
+        aiScore: product.aiScore ?? undefined,
+      } },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
@@ -95,13 +104,27 @@ export async function PUT(
     }
 
     const { id } = await params;
+    
+    // Convert arrays to JSON strings for SQLite
+    const updateData = { ...validationResult.data };
+    if (updateData.images) {
+      updateData.images = toJsonString(updateData.images as any);
+    }
+    if (updateData.tags) {
+      updateData.tags = toJsonString(updateData.tags as any);
+    }
+    
     const product = await prisma.product.update({
       where: { id },
-      data: validationResult.data,
+      data: updateData,
     }).then(p => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
+      images: parseJsonString(p.images),
+      tags: parseJsonString(p.tags),
+      aiTags: parseJsonString(p.aiTags),
+      aiScore: p.aiScore ?? undefined,
     }));
 
     // Log product update

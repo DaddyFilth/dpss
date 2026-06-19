@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ model User {
   emailVerified DateTime?
   password      String    // Hashed password
   image         String?
-  role          Role      @default(CUSTOMER)
+  role          String    @default("CUSTOMER") // CUSTOMER, ADMIN, SUPER_ADMIN
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastLogin     DateTime?
@@ -31,12 +31,6 @@ model User {
 
   @@index([email])
   @@index([role])
-}
-
-enum Role {
-  CUSTOMER
-  ADMIN
-  SUPER_ADMIN
 }
 
 // NextAuth models
@@ -83,19 +77,19 @@ model Product {
   id          String   @id @default(cuid())
   name        String
   description String
-  price       Decimal  @db.Decimal(10, 2)
-  comparePrice Decimal? @db.Decimal(10, 2)
+  price       Float
+  comparePrice Float?
   image       String
-  images      String[] // Array of image URLs
+  images      String   // JSON string of image URLs
   category    String
-  tags        String[]
+  tags        String   // JSON string of tags
   stock       Int      @default(0)
   sku         String?  @unique
   featured    Boolean  @default(false)
   rating      Float    @default(0)
   reviewsCount Int     @default(0)
   aiScore     Float?   // AI recommendation score
-  aiTags      String[] // AI-generated tags
+  aiTags      String   // JSON string of AI-generated tags
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -134,17 +128,17 @@ model CartItem {
 
 // Orders
 model Order {
-  id              String      @id @default(cuid())
+  id              String     @id @default(cuid())
   userId          String
   user            User        @relation(fields: [userId], references: [id])
-  status          OrderStatus @default(PENDING)
-  total           Decimal     @db.Decimal(10, 2)
-  subtotal        Decimal     @db.Decimal(10, 2)
-  tax             Decimal     @db.Decimal(10, 2)
-  shipping        Decimal     @db.Decimal(10, 2)
+  status          String     @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED
+  total           Float
+  subtotal        Float
+  tax             Float
+  shipping        Float
   paymentMethod   String
   paymentId       String?     // Stripe/PayPal payment ID
-  paymentStatus   PaymentStatus @default(PENDING)
+  paymentStatus   String     @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
   
   // Shipping address
   shippingName    String
@@ -167,28 +161,12 @@ model Order {
   @@index([paymentStatus])
 }
 
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  REFUNDED
-}
-
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  REFUNDED
-}
-
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
   productId String
   quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  price     Float
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
 

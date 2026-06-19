@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
+import { parseJsonString } from '@/lib/utils/json';
 import { 
   getPersonalizedRecommendations,
   getSimilarProducts,
@@ -39,6 +40,9 @@ export async function GET(request: NextRequest) {
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
+      images: parseJsonString(p.images),
+      tags: parseJsonString(p.tags),
+      aiTags: parseJsonString(p.aiTags),
       aiScore: p.aiScore ?? undefined,
     })));
 
@@ -108,6 +112,9 @@ export async function GET(request: NextRequest) {
           ...product,
           price: Number(product.price),
           comparePrice: product.comparePrice ? Number(product.comparePrice) : undefined,
+          images: parseJsonString(product.images),
+          tags: parseJsonString(product.tags),
+          aiTags: parseJsonString(product.aiTags),
           aiScore: product.aiScore ?? undefined,
         };
         recommendedProducts = await getSimilarProducts(convertedProduct, products, limit);
