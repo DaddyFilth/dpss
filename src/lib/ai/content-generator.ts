@@ -39,7 +39,7 @@ class AIContentGenerator {
     const emojis = this.emojiLibrary[tone];
 
     let content = '';
-    const hashtags: string[] = [];
+    let hashtags: string[] = [];
 
     // Platform-specific content generation
     switch (platform) {

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Chrome, Facebook, Instagram, Twitter, Pinterest, Plus, Check, Shield } from 'lucide-react';
+import { Globe, Plus, Check, Shield } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -142,23 +142,15 @@ export default function SocialDashboard() {
 
   const getPlatformIcon = (provider: string) => {
     const icons: Record<string, any> = {
-      google: Chrome,
-      facebook: Facebook,
-      instagram: Instagram,
-      twitter: Twitter,
-      pinterest: Pinterest,
+      google: Globe,
     };
-    const Icon = icons[provider] || Chrome;
+    const Icon = icons[provider] || Globe;
     return <Icon className="h-5 w-5" />;
   };
 
   const getPlatformColor = (provider: string) => {
     const colors: Record<string, string> = {
       google: 'bg-red-500',
-      facebook: 'bg-blue-600',
-      instagram: 'bg-gradient-to-r from-purple-500 to-pink-500',
-      twitter: 'bg-blue-400',
-      pinterest: 'bg-red-600',
     };
     return colors[provider] || 'bg-gray-500';
   };
@@ -230,7 +222,7 @@ export default function SocialDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {['google', 'facebook', 'instagram', 'twitter', 'pinterest'].map((provider) => {
+                  {['google'].map((provider) => {
                     const connected = socialAccounts.find(acc => acc.provider === provider);
                     return (
                       <Card key={provider} className="p-4">
@@ -322,10 +314,7 @@ export default function SocialDashboard() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="facebook">Facebook</SelectItem>
-                      <SelectItem value="twitter">Twitter</SelectItem>
-                      <SelectItem value="pinterest">Pinterest</SelectItem>
+                      <SelectItem value="google">Google</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

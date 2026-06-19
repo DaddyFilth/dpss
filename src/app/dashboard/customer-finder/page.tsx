@@ -479,21 +479,11 @@ export default function AICustomerTargetingDashboard() {
                   </ul>
                 </div>
 
-                <div>
-                  <h4 className="font-semibold mb-2">Recommended Channels</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {retargeting.channels.map((channel: string, i) => (
-                      <Badge key={i} variant="outline">
-                        {channel}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
               </div>
-            </Card>
-          </div>
-        )}
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

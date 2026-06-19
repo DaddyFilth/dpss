@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Github, Chrome, Facebook, Twitter, Instagram, Pinterest, Shield } from 'lucide-react';
+import { Globe, Shield } from 'lucide-react';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -66,40 +66,15 @@ export default function SignInPage() {
               onClick={() => handleOAuthSignIn('google')}
               className="w-full"
             >
-              <Chrome className="h-4 w-4 mr-2" />
+              <Globe className="h-4 w-4 mr-2" />
               Google
             </Button>
             <Button
               variant="outline"
-              onClick={() => handleOAuthSignIn('facebook')}
+              onClick={() => handleOAuthSignIn('github')}
               className="w-full"
             >
-              <Facebook className="h-4 w-4 mr-2" />
-              Facebook
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthSignIn('instagram')}
-              className="w-full"
-            >
-              <Instagram className="h-4 w-4 mr-2" />
-              Instagram
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthSignIn('twitter')}
-              className="w-full"
-            >
-              <Twitter className="h-4 w-4 mr-2" />
-              Twitter
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthSignIn('pinterest')}
-              className="w-full col-span-2"
-            >
-              <Pinterest className="h-4 w-4 mr-2" />
-              Pinterest
+              GitHub
             </Button>
           </div>
 

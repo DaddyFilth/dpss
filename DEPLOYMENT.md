@@ -1,16 +1,146 @@
-# Vercel Deployment Guide
+# Deployment Guide
 
-This guide will help you deploy your AI Dropship site to Vercel with all the required environment variables.
+This guide will help you deploy your AI Dropship site. You can choose between:
+
+- **Prisma Compute** (Recommended) - Integrated with your Prisma database
+- **Vercel** - Alternative deployment option
+
+## 🚀 Prisma Compute Deployment (Recommended)
+
+### Overview
+Prisma Compute provides seamless deployment integration with your Prisma database and offers automatic scaling, built-in monitoring, and simplified environment management.
+
+### Step 1: Set Up Prisma Compute Account
+
+1. Go to https://www.prisma.io/cloud
+2. Create an account or sign in
+3. Navigate to Prisma Compute section
+4. Create a new Compute Service for your Next.js application
+
+### Step 2: Configure GitHub Secrets
+
+Add the following secrets to your GitHub repository (`https://github.com/DaddyFilth/dpss/settings/secrets/actions`):
+
+1. **PRISMA_API_TOKEN**
+   - Get from: Prisma Cloud Dashboard → API Settings
+   - Required for authenticating with Prisma Compute
+
+2. **PRISMA_COMPUTE_SERVICE_ID**
+   - Get from: Prisma Compute Dashboard → Your Service → Service ID
+   - Format: typically looks like `cmqkj0y0x0k1f07gip4695ivz`
+
+### Step 3: Environment Variables Configuration
+
+Ensure your application has these environment variables configured (in Prisma Compute dashboard):
+
+**Required Variables:**
+```env
+DATABASE_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require
+NEXTAUTH_URL=https://your-app.prisma.cloud
+NEXTAUTH_SECRET=your-32-character-random-secret
+ENCRYPTION_KEY=your-32-character-encryption-key
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-app.prisma.cloud
+```
+
+**Payment Variables:**
+```env
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_your_stripe_key
+STRIPE_SECRET_KEY=sk_your_stripe_secret
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+PAYPAL_MODE=sandbox
+```
+
+**Social Media OAuth:**
+```env
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+INSTAGRAM_CLIENT_ID=your_instagram_client_id
+INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
+TWITTER_CLIENT_ID=your_twitter_client_id
+TWITTER_CLIENT_SECRET=your_twitter_client_secret
+PINTEREST_CLIENT_ID=your_pinterest_client_id
+PINTEREST_CLIENT_SECRET=your_pinterest_client_secret
+```
+
+**Optional AI Services:**
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### Step 4: Database Setup
+
+1. **Create PostgreSQL Database**
+   - Use Prisma's managed PostgreSQL or connect your own
+   - Recommended: Neon (free tier), Supabase, or Railway
+
+2. **Configure Database URL**
+   - Add `DATABASE_URL` to Prisma Compute environment variables
+   - Format: `postgresql://user:password@host:5432/database?sslmode=require`
+
+3. **Initialize Database Schema**
+   ```bash
+   # Locally with production database URL
+   export DATABASE_URL="your_production_database_url"
+   npx prisma db push
+   ```
+
+### Step 5: Automatic Deployment
+
+Once configured, deployment is automatic:
+
+1. **Push to main branch** - GitHub Actions will:
+   - Install dependencies
+   - Generate Prisma Client
+   - Build Next.js application
+   - Deploy to Prisma Compute
+
+2. **Monitor Deployment**
+   - Check GitHub Actions tab for deployment status
+   - View logs in Prisma Compute dashboard
+
+### Step 6: Post-Deployment Setup
+
+1. **Update NextAuth Configuration**
+   - Ensure `NEXTAUTH_URL` matches your Prisma Compute domain
+   - Update `NEXT_PUBLIC_APP_URL` accordingly
+
+2. **Configure Webhooks**
+   - Stripe webhook endpoint: `https://your-app.prisma.cloud/api/payments/stripe/webhook`
+   - Update webhook secret in environment variables
+
+3. **Create Admin User**
+   ```sql
+   -- Connect to your database and run:
+   UPDATE "User" SET role = 'ADMIN' WHERE email = 'your@email.com';
+   ```
+
+### Prisma Compute Benefits
+
+- ✅ **Integrated Database** - Seamless Prisma ORM integration
+- ✅ **Auto-scaling** - Automatically handles traffic spikes
+- ✅ **Built-in Monitoring** - Performance metrics and logs
+- ✅ **Environment Management** - Easy variable configuration
+- ✅ **Zero-downtime Deployments** - Rolling updates
+- ✅ **Global CDN** - Fast content delivery worldwide
+
+---
 
 ## 📋 Prerequisites
 
 1. ✅ GitHub repository: https://github.com/DaddyFilth/dpss
-2. ✅ Vercel account (sign up at https://vercel.com)
+2. ✅ Prisma Compute account (sign up at https://www.prisma.io/cloud) OR Vercel account (https://vercel.com)
 3. ✅ PostgreSQL database (Neon, Supabase, or Railway)
 4. ✅ Stripe account (for payments)
 5. ✅ PayPal account (for payments)
 
-## 🔧 Step 1: Generate Secure Secrets
+## 🚀 Vercel Deployment (Alternative)
+
+### 🔧 Step 1: Generate Secure Secrets
 
 Run the provided script to generate secure random secrets:
 
@@ -25,7 +155,7 @@ This will generate:
 
 Copy these values for the next step.
 
-## 📝 Step 2: Prepare Environment Variables
+### 📝 Step 2: Prepare Environment Variables
 
 ### Option A: Use the Template File
 
@@ -50,7 +180,7 @@ Replace:
 
 Edit `vercel-env-import.json` with the same replacements.
 
-## 🚀 Step 3: Deploy to Vercel
+### 🚀 Step 3: Deploy to Vercel
 
 ### Method 1: Vercel Dashboard (Recommended)
 
@@ -88,7 +218,7 @@ vercel env pull .env.vercel
 vercel --prod
 ```
 
-## 🗄️ Step 4: Set Up Database
+### 🗄️ Step 4: Set Up Database
 
 ### Neon (Recommended - Free)
 
@@ -104,7 +234,7 @@ vercel --prod
 3. Get connection string from Project Settings → Database
 4. Add to Vercel as `DATABASE_URL`
 
-## 💳 Step 5: Configure Payment Providers
+### 💳 Step 5: Configure Payment Providers
 
 ### Stripe Setup
 
@@ -127,7 +257,7 @@ vercel --prod
    - `PAYPAL_CLIENT_SECRET`
    - `PAYPAL_MODE=sandbox`
 
-## 🔧 Step 6: Final Deployment Configuration
+### 🔧 Step 6: Final Deployment Configuration
 
 ### Critical Environment Variables to Update
 
@@ -146,7 +276,7 @@ After updating environment variables, trigger a new deployment:
 - In Vercel dashboard → Deployments → Redeploy
 - Or push a small change to GitHub
 
-## 🗄️ Step 7: Initialize Database
+### 🗄️ Step 7: Initialize Database
 
 Once deployed, set up your database schema:
 
@@ -169,7 +299,7 @@ npx prisma db push
 - Add a post-deploy script
 - Or run this locally with your production database URL
 
-## ✅ Step 8: Test Your Deployment
+### ✅ Step 8: Test Your Deployment
 
 1. **Check main page**: https://dpss-xyz.vercel.app
 2. **Test authentication**: Try signing up
@@ -179,7 +309,7 @@ npx prisma db push
 4. **Test payment flow** (sandbox mode)
 5. **Check Vercel logs** for errors
 
-## 🔒 Admin Access Setup
+### 🔒 Admin Access Setup
 
 To access the admin dashboard, you need an admin account:
 
@@ -206,7 +336,7 @@ VALUES (
 );
 ```
 
-## 🎯 Post-Deployment Checklist
+### 🎯 Post-Deployment Checklist
 
 - [ ] Database connected and schema initialized
 - [ ] Environment variables configured correctly
@@ -219,7 +349,7 @@ VALUES (
 - [ ] Authentication working
 - [ ] Admin dashboard accessible
 
-## 🔄 Environment Variables Reference
+### 🔄 Environment Variables Reference
 
 ### Required Variables
 - `DATABASE_URL` - PostgreSQL connection string
@@ -240,7 +370,7 @@ VALUES (
 - `RATE_LIMIT_MAX_REQUESTS` - Default: 100
 - `RATE_LIMIT_WINDOW_MS` - Default: 900000
 
-## 🚨 Troubleshooting
+### 🚨 Troubleshooting
 
 ### Build Failures
 - Check environment variables are set correctly
@@ -262,7 +392,7 @@ VALUES (
 - Check webhook endpoint is accessible
 - Ensure webhook secret matches
 
-## 🎉 Success!
+### 🎉 Success!
 
 Your AI-powered dropshipping site is now live on Vercel! 
 
