@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils/cn';
+import { useCart } from '@/lib/cart/cart-context';
 
 interface ProductCardProps {
   product: Product;
@@ -16,8 +17,16 @@ interface ProductCardProps {
 export const ProductCard = ({ product, onAddToCart, onAddToWishlist }: ProductCardProps) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const { addToCart } = useCart();
 
   const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+    
     if (onAddToCart) {
       onAddToCart(product.id);
     }

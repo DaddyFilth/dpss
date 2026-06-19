@@ -4,28 +4,13 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/lib/cart/cart-context';
 
 export default function CartPage() {
-  // For now, use mock cart data. In a real app, this would come from state management
-  const cartItems = [
-    {
-      id: '1',
-      name: 'Wireless Noise-Canceling Headphones',
-      price: 199.99,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop',
-    },
-    {
-      id: '2',
-      name: 'Smart Fitness Watch',
-      price: 149.99,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&h=100&fit=crop',
-    },
-  ];
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = 9.99;
+  const { items, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  
+  const subtotal = getCartTotal();
+  const shipping = subtotal > 0 ? 9.99 : 0;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
@@ -39,7 +24,7 @@ export default function CartPage() {
           </h1>
         </div>
 
-        {cartItems.length === 0 ? (
+        {items.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
@@ -56,7 +41,7 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
+              {items.map((item) => (
                 <Card key={item.id}>
                   <CardContent className="p-6">
                     <div className="flex gap-4">
@@ -75,6 +60,7 @@ export default function CartPage() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
@@ -83,6 +69,7 @@ export default function CartPage() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               <Plus className="h-4 w-4" />
                             </Button>
@@ -91,6 +78,7 @@ export default function CartPage() {
                             variant="ghost"
                             size="icon"
                             className="text-destructive hover:text-destructive"
+                            onClick={() => removeFromCart(item.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
