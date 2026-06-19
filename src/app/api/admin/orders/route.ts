@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-      }).then(orders => orders.map(order => ({
+      }).then(orders => orders.map((order: any) => ({
         ...order,
         total: Number(order.total),
         subtotal: Number(order.subtotal),

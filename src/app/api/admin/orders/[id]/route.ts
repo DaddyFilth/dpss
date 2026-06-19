@@ -47,7 +47,7 @@ export async function GET(
           },
         },
       },
-    }).then(order => order ? {
+    }).then((order: any) => order ? {
       ...order,
       total: Number(order.total),
       subtotal: Number(order.subtotal),
@@ -113,7 +113,7 @@ export async function PUT(
     const order = await prisma.order.update({
       where: { id },
       data: validationResult.data,
-    }).then(order => ({
+    }).then((order: any) => ({
       ...order,
       total: Number(order.total),
       subtotal: Number(order.subtotal),
