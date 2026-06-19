@@ -2,35 +2,5 @@
   "buildCommand": "prisma generate && next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "env": {
-    "DATABASE_URL": {
-      "description": "Neon PostgreSQL connection string with SSL mode"
-    },
-    "NEXTAUTH_URL": {
-      "description": "Your Vercel app URL"
-    },
-    "NEXTAUTH_SECRET": {
-      "description": "NextAuth secret key (min 32 characters)"
-    },
-    "ENCRYPTION_KEY": {
-      "description": "32-character encryption key"
-    },
-    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": {
-      "description": "Stripe publishable key"
-    },
-    "STRIPE_SECRET_KEY": {
-      "description": "Stripe secret key"
-    },
-    "STRIPE_WEBHOOK_SECRET": {
-      "description": "Stripe webhook secret"
-    },
-    "OPENAI_API_KEY": {
-      "description": "OpenAI API key for recommendations"
-    },
-    "NEXT_PUBLIC_APP_URL": {
-      "description": "Your Vercel app URL"
-    }
-  }
+  "framework": "nextjs"
 }
