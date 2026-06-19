@@ -205,7 +205,7 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">Featured Products</h2>
             <Button variant="outline" asChild>
-              <a href="#products">View All</a>
+              <a href="/products">View All</a>
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -222,7 +222,7 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">Trending Now</h2>
             <Button variant="outline" asChild>
-              <a href="#products">View All</a>
+              <a href="/products">View All</a>
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -241,7 +241,7 @@ export default async function Home() {
             Join thousands of satisfied customers and discover your next favorite product.
           </p>
           <Button size="lg" variant="secondary" asChild>
-            <a href="#products">Browse Products</a>
+            <a href="/products">Browse Products</a>
           </Button>
         </div>
       </section>

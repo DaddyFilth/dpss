@@ -21,8 +21,9 @@ export const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#products" className="text-muted-foreground hover:text-primary">All Products</Link></li>
-              <li><Link href="#about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+              <li><Link href="/products" className="text-muted-foreground hover:text-primary">All Products</Link></li>
+              <li><Link href="/wishlist" className="text-muted-foreground hover:text-primary">Wishlist</Link></li>
+              <li><Link href="/cart" className="text-muted-foreground hover:text-primary">Cart</Link></li>
             </ul>
           </div>
 
@@ -30,6 +31,7 @@ export const Footer = () => {
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/admin" className="text-muted-foreground hover:text-primary">Admin Panel</Link></li>
+              <li><Link href="/admin/orders" className="text-muted-foreground hover:text-primary">Order Status</Link></li>
             </ul>
           </div>
 

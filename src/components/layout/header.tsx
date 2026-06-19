@@ -23,7 +23,7 @@ export const Header = () => {
             <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
               Home
             </Link>
-            <Link href="#products" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
               Products
             </Link>
             <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary">
@@ -41,6 +41,18 @@ export const Header = () => {
               className="pl-9 pr-4 py-2 w-64 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
+
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/wishlist">
+              <Heart className="h-5 w-5" />
+            </Link>
+          </Button>
+
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/cart">
+              <ShoppingCart className="h-5 w-5" />
+            </Link>
+          </Button>
 
           <Button variant="ghost" size="icon" asChild>
             <Link href="/admin">
@@ -65,11 +77,17 @@ export const Header = () => {
             <Link href="/" className="text-sm font-medium">
               Home
             </Link>
-            <Link href="#products" className="text-sm font-medium">
+            <Link href="/products" className="text-sm font-medium">
               Products
             </Link>
             <Link href="#about" className="text-sm font-medium">
               About
+            </Link>
+            <Link href="/wishlist" className="text-sm font-medium">
+              Wishlist
+            </Link>
+            <Link href="/cart" className="text-sm font-medium">
+              Cart
             </Link>
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
