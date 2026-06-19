@@ -57,7 +57,7 @@ export default function CheckoutSuccessPage({
               Continue Shopping
             </a>
             <a
-              href="/orders"
+              href="/admin/orders"
               className="block w-full py-2 px-4 border border-input rounded hover:bg-muted text-center"
             >
               View Orders

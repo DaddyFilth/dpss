@@ -20,16 +20,13 @@ export const Header = () => {
           </Link>
           
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
+              Home
+            </Link>
+            <Link href="#products" className="text-sm font-medium transition-colors hover:text-primary">
               Products
             </Link>
-            <Link href="/categories" className="text-sm font-medium transition-colors hover:text-primary">
-              Categories
-            </Link>
-            <Link href="/deals" className="text-sm font-medium transition-colors hover:text-primary">
-              Deals
-            </Link>
-            <Link href="/about" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary">
               About
             </Link>
           </nav>
@@ -46,19 +43,7 @@ export const Header = () => {
           </div>
 
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/wishlist">
-              <Heart className="h-5 w-5" />
-            </Link>
-          </Button>
-
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/cart">
-              <ShoppingCart className="h-5 w-5" />
-            </Link>
-          </Button>
-
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/auth/signin">
+            <Link href="/admin">
               <User className="h-5 w-5" />
             </Link>
           </Button>
@@ -77,16 +62,13 @@ export const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden border-t">
           <nav className="flex flex-col p-4 space-y-3">
-            <Link href="/products" className="text-sm font-medium">
+            <Link href="/" className="text-sm font-medium">
+              Home
+            </Link>
+            <Link href="#products" className="text-sm font-medium">
               Products
             </Link>
-            <Link href="/categories" className="text-sm font-medium">
-              Categories
-            </Link>
-            <Link href="/deals" className="text-sm font-medium">
-              Deals
-            </Link>
-            <Link href="/about" className="text-sm font-medium">
+            <Link href="#about" className="text-sm font-medium">
               About
             </Link>
             <div className="relative">

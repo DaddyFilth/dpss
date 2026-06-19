@@ -23,10 +23,10 @@ export default function CheckoutCancelPage() {
               Return to Store
             </a>
             <a
-              href="/cart"
+              href="#products"
               className="block w-full py-2 px-4 border border-input rounded hover:bg-muted text-center"
             >
-              View Cart
+              Browse Products
             </a>
           </div>
         </CardContent>

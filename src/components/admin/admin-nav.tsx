@@ -77,11 +77,11 @@ export const AdminNav = () => {
       })}
       
       <Link
-        href="/auth/signout"
+        href="/"
         className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors mt-4"
       >
         <LogOut className="h-5 w-5" />
-        Sign Out
+        Back to Home
       </Link>
     </nav>
   );
