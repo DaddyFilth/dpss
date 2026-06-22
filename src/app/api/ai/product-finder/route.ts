@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { aiProductFinder } from '@/lib/ai/product-finder';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth/auth.config';
 import { getSecurityHeaders } from '@/lib/security/rate-limit';
 
 export async function GET(request: NextRequest) {

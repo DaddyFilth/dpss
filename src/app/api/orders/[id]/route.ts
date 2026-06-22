@@ -19,7 +19,7 @@ export async function GET(
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const { id: orderId } = await params;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'order-fetch', 30, 900000);

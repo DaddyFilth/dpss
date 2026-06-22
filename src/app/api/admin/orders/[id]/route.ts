@@ -128,7 +128,7 @@ export async function PUT(
         action: 'ORDER_UPDATED',
         entity: 'Order',
         entityId: order.id,
-        userId: (session.user as any).id,
+        userId: session.user.id,
         details: `Order status updated: ${order.status}`,
         ipAddress: ip,
         userAgent: request.headers.get('user-agent') || undefined,

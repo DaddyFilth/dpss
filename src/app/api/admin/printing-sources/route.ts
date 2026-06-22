@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
         action: 'PRINTING_SOURCE_CREATED',
         entity: 'PrintingSource',
         entityId: printingSource.id,
-        userId: (session.user as any).id,
+        userId: session.user.id,
         details: `Printing source created: ${printingSource.name}`,
         ipAddress: ip,
         userAgent: request.headers.get('user-agent') || undefined,

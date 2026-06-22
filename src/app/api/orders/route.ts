@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'order-create', 10, 3600000);
     
@@ -269,7 +269,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'orders-list', 30, 900000);
     

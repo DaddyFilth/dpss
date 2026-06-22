@@ -2,10 +2,11 @@ import 'server-only'
 import { NextAuthOptions } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+import FacebookProvider from 'next-auth/providers/facebook';
+import TwitterProvider from 'next-auth/providers/twitter';
 import { compare } from 'bcryptjs';
 import { prisma } from '@/lib/utils/prisma';
-import { hashSensitiveData } from '@/lib/security/encryption';
-import { validateCookieName, validateCookiePath, validateCookieDomain } from '@/lib/security/sanitize';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -44,9 +45,22 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
+    signOut: '/auth/signout',
     error: '/auth/error',
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID || '',
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
+    }),
+    TwitterProvider({
+      clientId: process.env.TWITTER_CLIENT_ID || '',
+      clientSecret: process.env.TWITTER_CLIENT_SECRET || '',
+    }),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -74,7 +88,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        // Update last login
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLogin: new Date() },
@@ -95,25 +108,46 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = (user as any).role;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.id || token.sub;
-        (session.user as any).role = token.role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.email = token.email as string;
       }
       return session;
     },
   },
   events: {
-    async signIn({ user }) {
-      // Log successful sign-in for security auditing
-      console.log(`User signed in: ${user.email}`);
-    },
-    async signOut({ token }) {
-      // Log sign-out
-      console.log(`User signed out: ${token.email}`);
+    async signIn({ user, account, profile }) {
+      if (account && profile) {
+        await prisma.socialAccount.upsert({
+          where: {
+            userId_provider: {
+              userId: user.id!,
+              provider: account.provider,
+            }
+          },
+          update: {
+            accessToken: account.access_token,
+            refreshToken: account.refresh_token,
+            profile: profile as any,
+            expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
+          },
+          create: {
+            userId: user.id!,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            accessToken: account.access_token,
+            refreshToken: account.refresh_token,
+            profile: profile as any,
+            expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
+          },
+        });
+      }
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

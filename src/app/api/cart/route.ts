@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     const cart = await prisma.cart.findUnique({
       where: { userId },
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { productId, quantity } = validationResult.data;
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     // Check if product exists and has sufficient stock
     const product = await prisma.product.findUnique({
@@ -220,7 +220,7 @@ export async function DELETE(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const itemId = searchParams.get('itemId');
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     if (!itemId) {
       return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth/auth.config';
 import { getClientIP, getSecurityHeaders, rateLimit } from '@/lib/security/rate-limit';
 import { getSessionRole, isAdminRole, isSuperAdminRole } from '@/lib/auth/roles';
 import { exec } from 'child_process';

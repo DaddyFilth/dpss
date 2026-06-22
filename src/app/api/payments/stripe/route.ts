@@ -53,12 +53,12 @@ export async function POST(request: NextRequest) {
     // Add user ID to metadata
     const enhancedMetadata: Record<string, string> = {
       ...metadata,
-      userId: (session.user as any).id,
+      userId: session.user.id,
     };
 
     // Get or create Stripe customer
     const user = await prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: session.user.id },
       select: {
         id: true,
         email: true,
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       where: { id: orderId },
     });
 
-    if (!order || order.userId !== (session.user as any).id) {
+    if (!order || order.userId !== session.user.id) {
       return NextResponse.json(
         { error: 'Invalid order ID' },
         { status: 400, headers: getSecurityHeaders() }
