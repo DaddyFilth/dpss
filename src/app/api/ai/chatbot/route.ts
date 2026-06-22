@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { aiChatbot } from '@/lib/ai/chatbot';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Chatbot error:', error);
+    logger.error({ err: error }, 'Chatbot error');
     return NextResponse.json(
       { error: 'Failed to process message' },
       { status: 500, headers: getSecurityHeaders() }

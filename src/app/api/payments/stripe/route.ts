@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createPaymentIntent } from '@/lib/payments/stripe';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -53,12 +54,12 @@ export async function POST(request: NextRequest) {
     // Add user ID to metadata
     const enhancedMetadata: Record<string, string> = {
       ...metadata,
-      userId: (session.user as any).id,
+      userId: session.user.id,
     };
 
     // Get or create Stripe customer
     const user = await prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: session.user.id },
       select: {
         id: true,
         email: true,
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
       where: { id: orderId },
     });
 
-    if (!order || order.userId !== (session.user as any).id) {
+    if (!order || order.userId !== session.user.id) {
       return NextResponse.json(
         { error: 'Invalid order ID' },
         { status: 400, headers: getSecurityHeaders() }
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Stripe payment intent error:', error);
+    logger.error({ err: error }, 'Stripe payment intent error');
     return NextResponse.json(
       { error: 'Failed to create payment intent' },
       { status: 500, headers: getSecurityHeaders() }

@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // Automated Lead Generation System
 // Automatically captures, nurtures, and qualifies leads
 
@@ -387,7 +388,7 @@ class AutomatedLeadGeneration {
 
   // Send email (simulated)
   private async sendEmail(lead: Lead, step: EmailStep): Promise<void> {
-    console.log(`Sending email to ${lead.email}: ${step.subject}`);
+    logger.info(`Sending email to ${lead.email}: ${step.subject}`);
     // In production, integrate with email service (SendGrid, Mailchimp, etc.)
     
     // Update lead engagement

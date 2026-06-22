@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     const cart = await prisma.cart.findUnique({
       where: { userId },
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart fetch error:', error);
+    logger.error({ err: error }, 'Cart fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { productId, quantity } = validationResult.data;
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     // Check if product exists and has sufficient stock
     const product = await prisma.product.findUnique({
@@ -199,7 +200,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart update error:', error);
+    logger.error({ err: error }, 'Cart update error');
     return NextResponse.json(
       { error: 'Failed to update cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -220,7 +221,7 @@ export async function DELETE(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const itemId = searchParams.get('itemId');
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     if (!itemId) {
       return NextResponse.json(
@@ -253,7 +254,7 @@ export async function DELETE(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart item removal error:', error);
+    logger.error({ err: error }, 'Cart item removal error');
     return NextResponse.json(
       { error: 'Failed to remove item' },
       { status: 500, headers: getSecurityHeaders() }

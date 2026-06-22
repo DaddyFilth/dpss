@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -19,7 +20,7 @@ export async function GET(
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const { id: orderId } = await params;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'order-fetch', 30, 900000);
@@ -84,7 +85,7 @@ export async function GET(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Order fetch error:', error);
+    logger.error({ err: error }, 'Order fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch order' },
       { status: 500, headers: getSecurityHeaders() }

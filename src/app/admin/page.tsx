@@ -61,7 +61,7 @@ export default function AdminHub() {
     );
   }
 
-  const userRole = (session.user as any)?.role;
+  const userRole = session.user?.role;
   if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
     return (
       <div className="min-h-screen flex items-center justify-center">

@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   detachPaymentMethod,
@@ -23,7 +24,7 @@ export async function PATCH(
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const { id: paymentMethodId } = await params;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'payment-method-update', 20, 3600000);
@@ -54,7 +55,7 @@ export async function PATCH(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Set default payment method error:', error);
+    logger.error({ err: error }, 'Set default payment method error');
     return NextResponse.json(
       { error: 'Failed to set default payment method' },
       { status: 500, headers: getSecurityHeaders() }
@@ -77,7 +78,7 @@ export async function DELETE(
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const { id: paymentMethodId } = await params;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'payment-method-delete', 10, 3600000);
@@ -96,7 +97,7 @@ export async function DELETE(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Detach payment method error:', error);
+    logger.error({ err: error }, 'Detach payment method error');
     return NextResponse.json(
       { error: 'Failed to detach payment method' },
       { status: 500, headers: getSecurityHeaders() }

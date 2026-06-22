@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { prisma } from '@/lib/utils/prisma';
 
 // Printful API integration
@@ -136,7 +137,7 @@ export class PrintingService {
 
       return printOrder;
     } catch (error) {
-      console.error('Failed to create print order:', error);
+      logger.error({ err: error }, 'Failed to create print order');
       throw error;
     }
   }
@@ -211,7 +212,7 @@ export class PrintingService {
       
       return null;
     } catch (error) {
-      console.error('Failed to get print order status:', error);
+      logger.error({ err: error }, 'Failed to get print order status');
       throw error;
     }
   }

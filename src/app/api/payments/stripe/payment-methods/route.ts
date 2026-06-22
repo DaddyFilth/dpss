@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   attachPaymentMethod, 
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'payment-methods-list', 30, 900000);
     
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Payment methods list error:', error);
+    logger.error({ err: error }, 'Payment methods list error');
     return NextResponse.json(
       { error: 'Failed to list payment methods' },
       { status: 500, headers: getSecurityHeaders() }
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'payment-method-attach', 10, 3600000);
     
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Payment method attach error:', error);
+    logger.error({ err: error }, 'Payment method attach error');
     return NextResponse.json(
       { error: 'Failed to attach payment method' },
       { status: 500, headers: getSecurityHeaders() }

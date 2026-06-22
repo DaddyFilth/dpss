@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import bcrypt from 'bcryptjs';
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Signup error:', error);
+    logger.error({ err: error }, 'Signup error');
     return NextResponse.json(
       { error: 'Failed to create admin account' },
       { status: 500, headers: getSecurityHeaders() }

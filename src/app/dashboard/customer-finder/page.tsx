@@ -47,7 +47,7 @@ export default function AICustomerTargetingDashboard() {
 
   useEffect(() => {
     if (session) {
-      const userRole = (session.user as any)?.role;
+      const userRole = session.user?.role;
       if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
         router.push('/');
         return;
@@ -118,7 +118,7 @@ export default function AICustomerTargetingDashboard() {
     );
   }
 
-  const userRole = (session.user as any)?.role;
+  const userRole = session.user?.role;
   if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
     return (
       <div className="min-h-screen flex items-center justify-center">

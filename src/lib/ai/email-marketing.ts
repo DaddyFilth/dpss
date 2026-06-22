@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // AI-powered email marketing automation
 // Generates personalized email content and automates campaigns
 
@@ -403,12 +404,12 @@ class AIEmailMarketingSystem {
   async triggerCampaign(campaignId: string, customerId: string): Promise<void> {
     const campaign = this.campaigns.get(campaignId);
     if (!campaign) {
-      console.error(`Campaign ${campaignId} not found`);
+      logger.error(`Campaign ${campaignId} not found`);
       return;
     }
 
     // This would normally fetch customer data and send email
-    console.log(`Triggering campaign ${campaignId} for customer ${customerId}`);
+    logger.info(`Triggering campaign ${campaignId} for customer ${customerId}`);
   }
 }
 

@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // Automated Social Media Posting System
 // Automatically generates and posts content to social media
 
@@ -281,7 +282,7 @@ class AutomatedSocialMedia {
 
   // Execute post to social media
   private async executePost(post: SocialMediaPost): Promise<void> {
-    console.log(`Posting to ${post.platform}: ${post.content}`);
+    logger.info(`Posting to ${post.platform}: ${post.content}`);
     
     // In production, integrate with platform APIs:
     // - Instagram Graph API

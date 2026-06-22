@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -6,6 +7,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { getSessionRole, isAdminRole } from '@/lib/auth/roles';
 import { z } from 'zod';
+import { encryptFields, decryptFields } from '@/lib/security/field-encryption';
 
 const printingSourceSchema = z.object({
   name: z.string().min(1),
@@ -56,12 +58,16 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
+    const decryptedSources = await Promise.all(
+      printingSources.map(source => decryptFields('PrintingSource', source))
+    );
+
     return NextResponse.json(
-      { printingSources },
+      { printingSources: decryptedSources },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Printing sources fetch error:', error);
+    logger.error({ err: error }, 'Printing sources fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch printing sources' },
       { status: 500, headers: getSecurityHeaders() }
@@ -107,8 +113,10 @@ export async function POST(request: NextRequest) {
       ...rest,
     };
 
+    const encryptedData = await encryptFields('PrintingSource', sanitizedData);
+
     const printingSource = await prisma.printingSource.create({
-      data: sanitizedData,
+      data: encryptedData as typeof sanitizedData,
     });
 
     // Log creation
@@ -117,7 +125,7 @@ export async function POST(request: NextRequest) {
         action: 'PRINTING_SOURCE_CREATED',
         entity: 'PrintingSource',
         entityId: printingSource.id,
-        userId: (session.user as any).id,
+        userId: session.user.id,
         details: `Printing source created: ${printingSource.name}`,
         ipAddress: ip,
         userAgent: request.headers.get('user-agent') || undefined,
@@ -129,7 +137,7 @@ export async function POST(request: NextRequest) {
       { status: 201, headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Printing source creation error:', error);
+    logger.error({ err: error }, 'Printing source creation error');
     return NextResponse.json(
       { error: 'Failed to create printing source' },
       { status: 500, headers: getSecurityHeaders() }

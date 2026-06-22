@@ -177,13 +177,7 @@ export default function SettingsPage() {
                 <span className="text-sm">Connected</span>
               </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">PayPal Status</label>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                <span className="text-sm">Connected</span>
-              </div>
-            </div>
+            {/* TODO: PayPal integration removed - add back when needed */}
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Sandbox Mode</p>

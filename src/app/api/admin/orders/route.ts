@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -16,7 +17,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Rate limiting
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'admin-orders', 50, 900000);
     
@@ -29,56 +29,61 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const cursor = searchParams.get('cursor');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
 
     const where: any = {};
     if (status) {
       where.status = status;
     }
 
-    const [orders, total] = await Promise.all([
-      prisma.order.findMany({
-        where,
-        take: limit,
-        skip: offset,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
+    const orders = await prisma.order.findMany({
+      where,
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
-          items: {
-            include: {
-              product: {
-                select: {
-                  id: true,
-                  name: true,
-              image: true,
-                },
+        },
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
               },
             },
           },
         },
-      }).then(orders => orders.map((order: any) => ({
-        ...order,
-        total: Number(order.total),
-        subtotal: Number(order.subtotal),
-        tax: Number(order.tax),
-        shipping: Number(order.shipping),
-      }))),
-      prisma.order.count({ where }),
-    ]);
+      },
+    });
+
+    const hasMore = orders.length > limit;
+    const items = hasMore ? orders.slice(0, limit) : orders;
+    const nextCursor = hasMore ? items[items.length - 1].id : null;
+
+    const formattedOrders = items.map((order: any) => ({
+      ...order,
+      total: Number(order.total),
+      subtotal: Number(order.subtotal),
+      tax: Number(order.tax),
+      shipping: Number(order.shipping),
+    }));
+
+    const total = await prisma.order.count({ where });
 
     return NextResponse.json(
-      { orders, total, hasMore: offset + limit < total },
+      { orders: formattedOrders, total, nextCursor },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Orders fetch error:', error);
+    logger.error({ err: error }, 'Orders fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500, headers: getSecurityHeaders() }

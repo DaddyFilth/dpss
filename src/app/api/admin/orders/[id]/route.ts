@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -68,7 +69,7 @@ export async function GET(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Order fetch error:', error);
+    logger.error({ err: error }, 'Order fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch order' },
       { status: 500, headers: getSecurityHeaders() }
@@ -128,7 +129,7 @@ export async function PUT(
         action: 'ORDER_UPDATED',
         entity: 'Order',
         entityId: order.id,
-        userId: (session.user as any).id,
+        userId: session.user.id,
         details: `Order status updated: ${order.status}`,
         ipAddress: ip,
         userAgent: request.headers.get('user-agent') || undefined,
@@ -140,7 +141,7 @@ export async function PUT(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Order update error:', error);
+    logger.error({ err: error }, 'Order update error');
     return NextResponse.json(
       { error: 'Failed to update order' },
       { status: 500, headers: getSecurityHeaders() }

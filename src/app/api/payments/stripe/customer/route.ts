@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getOrCreateCustomer, 
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'customer-info', 30, 900000);
     
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer retrieval error:', error);
+    logger.error({ err: error }, 'Customer retrieval error');
     return NextResponse.json(
       { error: 'Failed to retrieve customer information' },
       { status: 500, headers: getSecurityHeaders() }
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'customer-create', 10, 3600000);
     
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer creation error:', error);
+    logger.error({ err: error }, 'Customer creation error');
     return NextResponse.json(
       { error: 'Failed to create or retrieve customer' },
       { status: 500, headers: getSecurityHeaders() }
@@ -152,7 +153,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'customer-update', 20, 3600000);
     
@@ -196,7 +197,7 @@ export async function PATCH(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer update error:', error);
+    logger.error({ err: error }, 'Customer update error');
     return NextResponse.json(
       { error: 'Failed to update customer' },
       { status: 500, headers: getSecurityHeaders() }

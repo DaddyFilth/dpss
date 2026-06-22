@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'order-create', 10, 3600000);
     
@@ -249,7 +250,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Order creation error:', error);
+    logger.error({ err: error }, 'Order creation error');
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500, headers: getSecurityHeaders() }
@@ -269,7 +270,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, 'orders-list', 30, 900000);
     
@@ -309,7 +310,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Orders fetch error:', error);
+    logger.error({ err: error }, 'Orders fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500, headers: getSecurityHeaders() }

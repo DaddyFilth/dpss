@@ -1,7 +1,8 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { aiCustomerFinder } from '@/lib/ai/customer-finder';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth/auth.config';
 import { getSecurityHeaders } from '@/lib/security/rate-limit';
 
 export async function GET(request: NextRequest) {
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('AI customer finder error:', error);
+    logger.error({ err: error }, 'AI customer finder error');
     return NextResponse.json(
       { error: 'Failed to generate customer targeting strategy' },
       { status: 500, headers: getSecurityHeaders() }
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('AI customer finder error:', error);
+    logger.error({ err: error }, 'AI customer finder error');
     return NextResponse.json(
       { error: 'Failed to get customer targeting data' },
       { status: 500, headers: getSecurityHeaders() }

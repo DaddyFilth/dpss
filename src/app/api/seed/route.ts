@@ -1,6 +1,7 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth/auth.config';
 import { getClientIP, getSecurityHeaders, rateLimit } from '@/lib/security/rate-limit';
 import { getSessionRole, isAdminRole, isSuperAdminRole } from '@/lib/auth/roles';
 import { exec } from 'child_process';
@@ -41,14 +42,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'seed') {
-      console.log('Starting database seeding...');
+      logger.info('Starting database seeding...');
       
       try {
         // Run the seed script
         const { stdout, stderr } = await execAsync('npx prisma db seed');
         
-        console.log('Seeding stdout:', stdout);
-        if (stderr) console.log('Seeding stderr:', stderr);
+        logger.info({ stdout }, 'Seeding completed');
+        if (stderr) logger.warn({ stderr }, 'Seeding stderr output');
         
         return NextResponse.json(
           { 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
           { headers: getSecurityHeaders() }
         );
       } catch (error: any) {
-        console.error('Seeding error:', error);
+        logger.error({ err: error }, 'Seeding error');
         return NextResponse.json(
           { 
             error: 'Seeding failed', 
@@ -76,17 +77,17 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      console.log('Resetting database and seeding...');
+      logger.info('Resetting database and seeding...');
       
       try {
         // Reset database (drop and recreate)
         const { stdout: resetOutput } = await execAsync('npx prisma db push --force-reset');
-        console.log('Reset output:', resetOutput);
+        logger.info({ output: resetOutput }, 'Database reset completed');
         
         // Then seed
         const { stdout, stderr } = await execAsync('npx prisma db seed');
-        console.log('Seeding stdout:', stdout);
-        if (stderr) console.log('Seeding stderr:', stderr);
+        logger.info({ stdout }, 'Seeding completed');
+        if (stderr) logger.warn({ stderr }, 'Seeding stderr output');
         
         return NextResponse.json(
           { 
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
           { headers: getSecurityHeaders() }
         );
       } catch (error: any) {
-        console.error('Reset and seeding error:', error);
+        logger.error({ err: error }, 'Reset and seeding error');
         return NextResponse.json(
           { 
             error: 'Reset and seeding failed', 
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error('Seed API error:', error);
+    logger.error({ err: error }, 'Seed API error');
     return NextResponse.json(
       { error: 'Failed to process seed request' },
       { status: 500, headers: getSecurityHeaders() }
