@@ -174,7 +174,7 @@ export default async function Home() {
               </div>
               <h3 className="font-semibold mb-2">Secure Payments</h3>
               <p className="text-sm text-muted-foreground">
-                Encrypted transactions with Stripe and PayPal
+                Encrypted transactions with Stripe
               </p>
             </div>
             <div className="text-center">

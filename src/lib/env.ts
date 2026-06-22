@@ -38,11 +38,6 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().default(''),
   STRIPE_WEBHOOK_SECRET: z.string().default(''),
 
-  // PayPal (optional)
-  PAYPAL_CLIENT_ID: z.string().default(''),
-  PAYPAL_CLIENT_SECRET: z.string().default(''),
-  PAYPAL_MODE: z.enum(['sandbox', 'production']).default('sandbox'),
-
   // AI/ML
   OPENAI_API_KEY: z.string().default(''),
 
