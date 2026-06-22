@@ -6,25 +6,31 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const cursor = searchParams.get('cursor');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
 
     const where: any = { stock: { gt: 0 } };
     if (category) where.category = category;
 
     const products = await prisma.product.findMany({
       where,
-      take: limit,
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       orderBy: { createdAt: 'desc' },
     });
 
-    const formattedProducts = products.map(p => ({
+    const hasMore = products.length > limit;
+    const items = hasMore ? products.slice(0, limit) : products;
+    const nextCursor = hasMore ? items[items.length - 1].id : null;
+
+    const formattedProducts = items.map(p => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
     }));
 
     return NextResponse.json(
-      { products: formattedProducts },
+      { products: formattedProducts, nextCursor },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
