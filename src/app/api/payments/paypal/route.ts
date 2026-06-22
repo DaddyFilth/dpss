@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createPayPalOrder, capturePayPalOrder } from '@/lib/payments/paypal';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error('PayPal payment error:', error);
+    logger.error('PayPal payment error:', error);
     return NextResponse.json(
       { error: 'Failed to process PayPal payment' },
       { status: 500, headers: getSecurityHeaders() }

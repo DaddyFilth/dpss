@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { automatedLeadGeneration } from '@/lib/automation/lead-generation';
 import { automatedSocialMedia } from '@/lib/automation/social-media';
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Automation API error:', error);
+    logger.error('Automation API error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch automation data', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500, headers: getSecurityHeaders() }
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, ...params } = body;
 
-    console.log('Automation action:', action, params);
+    logger.info('Automation action:', action, params);
 
     let result: any = {};
 
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Automation action error:', error);
+    logger.error('Automation action error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to perform action', details: error instanceof Error ? error.stack : undefined },
       { status: 500, headers: getSecurityHeaders() }

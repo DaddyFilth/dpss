@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart fetch error:', error);
+    logger.error('Cart fetch error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -199,7 +200,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart update error:', error);
+    logger.error('Cart update error:', error);
     return NextResponse.json(
       { error: 'Failed to update cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -253,7 +254,7 @@ export async function DELETE(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Cart item removal error:', error);
+    logger.error('Cart item removal error:', error);
     return NextResponse.json(
       { error: 'Failed to remove item' },
       { status: 500, headers: getSecurityHeaders() }

@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { aiRecommendationEngine } from '@/lib/ai/product-recommendations';
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('AI recommendations error:', error);
+    logger.error('AI recommendations error:', error);
     return NextResponse.json(
       { error: 'Failed to generate recommendations' },
       { status: 500, headers: getSecurityHeaders() }
@@ -110,7 +111,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('AI recommendations error:', error);
+    logger.error('AI recommendations error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch recommendations' },
       { status: 500, headers: getSecurityHeaders() }

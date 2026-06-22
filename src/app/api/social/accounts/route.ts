@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { getServerSession } from 'next-auth';
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Failed to fetch social accounts:', error);
+    logger.error('Failed to fetch social accounts:', error);
     return NextResponse.json(
       { error: 'Failed to fetch accounts' },
       { status: 500, headers: getSecurityHeaders() }

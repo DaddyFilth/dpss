@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // Stripe payment integration with security-first approach
 import 'server-only'
 import Stripe from 'stripe';
@@ -45,7 +46,7 @@ export const createPaymentIntent = async (input: PaymentIntentInput & { customer
       paymentIntentId: paymentIntent.id,
     };
   } catch (error) {
-    console.error('Stripe payment intent creation error:', error);
+    logger.error('Stripe payment intent creation error:', error);
     throw new Error('Failed to create payment intent');
   }
 };
@@ -66,7 +67,7 @@ export const confirmPayment = async (paymentIntentId: string) => {
       status: paymentIntent.status,
     };
   } catch (error) {
-    console.error('Stripe payment confirmation error:', error);
+    logger.error('Stripe payment confirmation error:', error);
     throw new Error('Failed to confirm payment');
   }
 };
@@ -84,7 +85,7 @@ export const createCustomer = async (input: CustomerInput) => {
       customer,
     };
   } catch (error) {
-    console.error('Stripe customer creation error:', error);
+    logger.error('Stripe customer creation error:', error);
     throw new Error('Failed to create customer');
   }
 };
@@ -131,7 +132,7 @@ export const getOrCreateCustomer = async (userId: string, email: string, name?: 
       created: true,
     };
   } catch (error) {
-    console.error('Stripe get or create customer error:', error);
+    logger.error('Stripe get or create customer error:', error);
     throw new Error('Failed to get or create customer');
   }
 };
@@ -148,7 +149,7 @@ export const updateCustomer = async (customerId: string, updates: {
       customer,
     };
   } catch (error) {
-    console.error('Stripe customer update error:', error);
+    logger.error('Stripe customer update error:', error);
     throw new Error('Failed to update customer');
   }
 };
@@ -158,7 +159,7 @@ export const getCustomer = async (customerId: string) => {
     const customer = await stripe.customers.retrieve(customerId);
     return customer;
   } catch (error) {
-    console.error('Stripe customer retrieval error:', error);
+    logger.error('Stripe customer retrieval error:', error);
     throw new Error('Failed to retrieve customer');
   }
 };
@@ -171,7 +172,7 @@ export const listCustomerPaymentMethods = async (customerId: string) => {
     });
     return paymentMethods;
   } catch (error) {
-    console.error('Stripe payment methods list error:', error);
+    logger.error('Stripe payment methods list error:', error);
     throw new Error('Failed to list payment methods');
   }
 };
@@ -183,7 +184,7 @@ export const attachPaymentMethod = async (paymentMethodId: string, customerId: s
     });
     return paymentMethod;
   } catch (error) {
-    console.error('Stripe payment method attach error:', error);
+    logger.error('Stripe payment method attach error:', error);
     throw new Error('Failed to attach payment method');
   }
 };
@@ -193,7 +194,7 @@ export const detachPaymentMethod = async (paymentMethodId: string) => {
     const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
     return paymentMethod;
   } catch (error) {
-    console.error('Stripe payment method detach error:', error);
+    logger.error('Stripe payment method detach error:', error);
     throw new Error('Failed to detach payment method');
   }
 };
@@ -207,7 +208,7 @@ export const setDefaultPaymentMethod = async (customerId: string, paymentMethodI
     });
     return customer;
   } catch (error) {
-    console.error('Stripe set default payment method error:', error);
+    logger.error('Stripe set default payment method error:', error);
     throw new Error('Failed to set default payment method');
   }
 };
@@ -228,7 +229,7 @@ export const handleWebhook = async (payload: string, signature: string) => {
 
     return event;
   } catch (error) {
-    console.error('Stripe webhook verification error:', error);
+    logger.error('Stripe webhook verification error:', error);
     throw new Error('Invalid webhook signature');
   }
 };
@@ -248,7 +249,7 @@ export const refundPayment = async (paymentIntentId: string, amount?: number) =>
       refund,
     };
   } catch (error) {
-    console.error('Stripe refund error:', error);
+    logger.error('Stripe refund error:', error);
     throw new Error('Failed to process refund');
   }
 };
@@ -259,7 +260,7 @@ export const getPaymentMethod = async (paymentMethodId: string) => {
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     return paymentMethod;
   } catch (error) {
-    console.error('Stripe payment method retrieval error:', error);
+    logger.error('Stripe payment method retrieval error:', error);
     throw new Error('Failed to retrieve payment method');
   }
 };
@@ -282,7 +283,7 @@ export const createSubscription = async (
       subscription,
     };
   } catch (error) {
-    console.error('Stripe subscription creation error:', error);
+    logger.error('Stripe subscription creation error:', error);
     throw new Error('Failed to create subscription');
   }
 };

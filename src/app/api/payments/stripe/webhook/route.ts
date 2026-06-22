@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { handleWebhook } from '@/lib/payments/stripe';
 import { prisma } from '@/lib/utils/prisma';
@@ -11,22 +12,22 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('stripe-signature');
 
     if (!signature) {
-      console.error(`[${requestId}] Missing stripe signature`);
+      logger.error(`[${requestId}] Missing stripe signature`);
       return NextResponse.json(
         { error: 'Missing stripe signature' },
         { status: 400, headers: getSecurityHeaders() }
       );
     }
 
-    console.log(`[${requestId}] Processing webhook event`);
+    logger.info(`[${requestId}] Processing webhook event`);
     const event = await handleWebhook(body, signature);
-    console.log(`[${requestId}] Webhook event verified: ${event.type}`);
+    logger.info(`[${requestId}] Webhook event verified: ${event.type}`);
 
     // Handle different event types
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as any;
-        console.log(`[${requestId}] Checkout session completed: ${session.id}`);
+        logger.info(`[${requestId}] Checkout session completed: ${session.id}`);
         
         // Handle checkout session completion
         if (session.metadata?.orderId) {
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
 
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as any;
-        console.log(`[${requestId}] Payment intent succeeded: ${paymentIntent.id}`);
+        logger.info(`[${requestId}] Payment intent succeeded: ${paymentIntent.id}`);
         
         // Update order payment status
         if (paymentIntent.metadata.orderId) {
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
 
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as any;
-        console.error(`[${requestId}] Payment intent failed: ${paymentIntent.id}`);
+        logger.error(`[${requestId}] Payment intent failed: ${paymentIntent.id}`);
         
         if (paymentIntent.metadata.orderId) {
           await prisma.$transaction(async (tx) => {
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
 
       case 'payment_intent.canceled': {
         const paymentIntent = event.data.object as any;
-        console.log(`[${requestId}] Payment intent canceled: ${paymentIntent.id}`);
+        logger.info(`[${requestId}] Payment intent canceled: ${paymentIntent.id}`);
         
         if (paymentIntent.metadata.orderId) {
           await prisma.order.update({
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
 
       case 'charge.refunded': {
         const charge = event.data.object as any;
-        console.log(`[${requestId}] Charge refunded: ${charge.id}`);
+        logger.info(`[${requestId}] Charge refunded: ${charge.id}`);
         
         // Find order by payment intent ID
         const order = await prisma.order.findFirst({
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
 
       case 'charge.dispute.created': {
         const charge = event.data.object as any;
-        console.warn(`[${requestId}] Charge dispute created: ${charge.id}`);
+        logger.warn(`[${requestId}] Charge dispute created: ${charge.id}`);
         
         const order = await prisma.order.findFirst({
           where: { paymentId: charge.payment_intent },
@@ -196,16 +197,16 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`[${requestId}] Unhandled event type: ${event.type}`);
+        logger.info(`[${requestId}] Unhandled event type: ${event.type}`);
     }
 
-    console.log(`[${requestId}] Webhook processed successfully`);
+    logger.info(`[${requestId}] Webhook processed successfully`);
     return NextResponse.json(
       { received: true },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error(`[${requestId}] Stripe webhook error:`, error);
+    logger.error(`[${requestId}] Stripe webhook error:`, error);
     return NextResponse.json(
       { error: 'Webhook handler failed' },
       { status: 500, headers: getSecurityHeaders() }

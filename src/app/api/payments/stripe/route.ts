@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createPaymentIntent } from '@/lib/payments/stripe';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Stripe payment intent error:', error);
+    logger.error('Stripe payment intent error:', error);
     return NextResponse.json(
       { error: 'Failed to create payment intent' },
       { status: 500, headers: getSecurityHeaders() }

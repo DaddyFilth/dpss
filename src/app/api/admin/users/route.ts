@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Users fetch error:', error);
+    logger.error('Users fetch error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch users' },
       { status: 500, headers: getSecurityHeaders() }

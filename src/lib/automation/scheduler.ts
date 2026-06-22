@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // Automation Scheduler - Runs all automations on autopilot
 import { automatedLeadGeneration } from './lead-generation';
 import { automatedSocialMedia } from './social-media';
@@ -73,14 +74,14 @@ class AutomationScheduler {
 
   // Start the scheduler
   start(): void {
-    console.log('Starting automation scheduler...');
+    logger.info('Starting automation scheduler...');
     
     // Run every minute to check for tasks
     this.intervalId = setInterval(() => {
       this.checkAndRunTasks();
     }, 60000); // Check every minute
 
-    console.log('Automation scheduler started');
+    logger.info('Automation scheduler started');
   }
 
   // Stop the scheduler
@@ -88,7 +89,7 @@ class AutomationScheduler {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-      console.log('Automation scheduler stopped');
+      logger.info('Automation scheduler stopped');
     }
   }
 
@@ -118,7 +119,7 @@ class AutomationScheduler {
 
   // Run a task
   private async runTask(task: AutomationTask): Promise<void> {
-    console.log(`Running task: ${task.name}`);
+    logger.info(`Running task: ${task.name}`);
     task.stats.runs++;
 
     try {
@@ -130,7 +131,7 @@ class AutomationScheduler {
           await this.runLeadSegmentationTask(task);
           break;
         default:
-          console.log(`Task type ${task.type} not implemented`);
+          logger.info(`Task type ${task.type} not implemented`);
       }
 
       task.stats.successes++;
@@ -139,10 +140,10 @@ class AutomationScheduler {
       // Calculate next run time (simplified - in production use proper cron)
       this.calculateNextRun(task);
       
-      console.log(`Task ${task.name} completed successfully`);
+      logger.info(`Task ${task.name} completed successfully`);
     } catch (error) {
       task.stats.failures++;
-      console.error(`Task ${task.name} failed:`, error);
+      logger.error(`Task ${task.name} failed:`, error);
     }
   }
 
@@ -168,7 +169,7 @@ class AutomationScheduler {
     const leads = automatedLeadGeneration.getLeads();
     
     // In production, implement sophisticated segmentation logic
-    console.log(`Segmenting ${leads.length} leads...`);
+    logger.info(`Segmenting ${leads.length} leads...`);
   }
 
   // Calculate next run time (simplified)

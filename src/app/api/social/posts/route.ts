@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { getServerSession } from 'next-auth';
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Failed to create social post:', error);
+    logger.error('Failed to create social post:', error);
     return NextResponse.json(
       { error: 'Failed to create post' },
       { status: 500, headers: getSecurityHeaders() }
@@ -131,7 +132,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Failed to fetch social posts:', error);
+    logger.error('Failed to fetch social posts:', error);
     return NextResponse.json(
       { error: 'Failed to fetch posts' },
       { status: 500, headers: getSecurityHeaders() }

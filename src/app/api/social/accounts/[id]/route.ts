@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/prisma';
 import { getServerSession } from 'next-auth';
@@ -43,7 +44,7 @@ export async function DELETE(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Failed to disconnect account:', error);
+    logger.error('Failed to disconnect account:', error);
     return NextResponse.json(
       { error: 'Failed to disconnect account' },
       { status: 500, headers: getSecurityHeaders() }

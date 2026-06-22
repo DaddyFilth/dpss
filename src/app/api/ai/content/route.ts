@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { aiContentGenerator } from '@/lib/ai/content-generator';
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit';
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('AI content generation error:', error);
+    logger.error('AI content generation error:', error);
     return NextResponse.json(
       { error: 'Failed to generate content' },
       { status: 500, headers: getSecurityHeaders() }

@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getOrCreateCustomer, 
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer retrieval error:', error);
+    logger.error('Customer retrieval error:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve customer information' },
       { status: 500, headers: getSecurityHeaders() }
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer creation error:', error);
+    logger.error('Customer creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create or retrieve customer' },
       { status: 500, headers: getSecurityHeaders() }
@@ -196,7 +197,7 @@ export async function PATCH(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    console.error('Customer update error:', error);
+    logger.error('Customer update error:', error);
     return NextResponse.json(
       { error: 'Failed to update customer' },
       { status: 500, headers: getSecurityHeaders() }

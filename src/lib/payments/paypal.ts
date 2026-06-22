@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 // PayPal payment integration
 import 'server-only'
 // Note: This is a simplified implementation for demonstration
@@ -46,7 +47,7 @@ export const createPayPalOrder = async (input: OrderInput) => {
       },
     };
   } catch (error) {
-    console.error('PayPal order creation error:', error);
+    logger.error('PayPal order creation error:', error);
     throw new Error('Failed to create PayPal order');
   }
 };
@@ -61,7 +62,7 @@ export const capturePayPalOrder = async (orderId: string) => {
       status: 'COMPLETED',
     };
   } catch (error) {
-    console.error('PayPal order capture error:', error);
+    logger.error('PayPal order capture error:', error);
     throw new Error('Failed to capture PayPal order');
   }
 };
@@ -75,7 +76,7 @@ export const refundPayPalPayment = async (captureId: string, amount?: number) =>
       status: 'COMPLETED',
     };
   } catch (error) {
-    console.error('PayPal refund error:', error);
+    logger.error('PayPal refund error:', error);
     throw new Error('Failed to process PayPal refund');
   }
 };
@@ -97,7 +98,7 @@ export const getPayPalOrderDetails = async (orderId: string) => {
       ],
     };
   } catch (error) {
-    console.error('PayPal order details error:', error);
+    logger.error('PayPal order details error:', error);
     throw new Error('Failed to get PayPal order details');
   }
 };
