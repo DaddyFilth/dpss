@@ -1,7 +1,8 @@
 'use server'
 
 import { headers } from 'next/headers'
-import { stripe } from '@/lib/payments/stripe'
+import { getStripeClient } from '@/lib/payments/stripe'
+import logger from '@/lib/logger'
 import { prisma } from '@/lib/utils/prisma'
 import { rateLimit, getClientIP, getSecurityHeaders } from '@/lib/security/rate-limit'
 
@@ -52,7 +53,7 @@ export async function startCheckoutSession(productId: string) {
     const priceInCents = Math.round(product.price * 100)
 
     // Create Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripeClient().checkout.sessions.create({
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
       line_items: [
@@ -85,7 +86,7 @@ export async function startCheckoutSession(productId: string) {
       url: session.url,
     }
   } catch (error: any) {
-    console.error('Checkout session creation error:', error)
+    logger.error({ err: error }, 'Checkout session creation error')
     throw new Error(error.message || 'Failed to create checkout session')
   }
 }
@@ -138,7 +139,7 @@ export async function startCheckoutSessionForCart(cartId: string) {
     const totalAmount = lineItems.reduce((sum, item) => sum + (item.price_data.unit_amount * item.quantity), 0)
 
     // Create Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripeClient().checkout.sessions.create({
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
       line_items: lineItems,
@@ -159,14 +160,14 @@ export async function startCheckoutSessionForCart(cartId: string) {
       url: session.url,
     }
   } catch (error: any) {
-    console.error('Cart checkout session creation error:', error)
+    logger.error({ err: error }, 'Cart checkout session creation error')
     throw new Error(error.message || 'Failed to create checkout session')
   }
 }
 
 export async function retrieveCheckoutSession(sessionId: string) {
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId)
+    const session = await getStripeClient().checkout.sessions.retrieve(sessionId)
     
     return {
       status: session.status,
@@ -175,7 +176,7 @@ export async function retrieveCheckoutSession(sessionId: string) {
       totalAmount: session.amount_total ? session.amount_total / 100 : 0,
     }
   } catch (error: any) {
-    console.error('Checkout session retrieval error:', error)
+    logger.error({ err: error }, 'Checkout session retrieval error')
     throw new Error(error.message || 'Failed to retrieve checkout session')
   }
 }

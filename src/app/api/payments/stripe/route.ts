@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Stripe payment intent error:', error);
+    logger.error({ err: error }, 'Stripe payment intent error');
     return NextResponse.json(
       { error: 'Failed to create payment intent' },
       { status: 500, headers: getSecurityHeaders() }

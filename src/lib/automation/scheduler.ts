@@ -143,7 +143,7 @@ class AutomationScheduler {
       logger.info(`Task ${task.name} completed successfully`);
     } catch (error) {
       task.stats.failures++;
-      logger.error(`Task ${task.name} failed:`, error);
+      logger.error({ err: error, task: task.name }, 'Task failed');
     }
   }
 

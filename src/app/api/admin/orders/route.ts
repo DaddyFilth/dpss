@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Orders fetch error:', error);
+    logger.error({ err: error }, 'Orders fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500, headers: getSecurityHeaders() }

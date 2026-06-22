@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI content generation error:', error);
+    logger.error({ err: error }, 'AI content generation error');
     return NextResponse.json(
       { error: 'Failed to generate content' },
       { status: 500, headers: getSecurityHeaders() }

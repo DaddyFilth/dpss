@@ -4,12 +4,20 @@ import 'server-only'
 import Stripe from 'stripe';
 import { encrypt } from '@/lib/security/encryption';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-05-27.dahlia',
-  typescript: true,
-});
+let _stripe: Stripe | null = null;
 
-export { stripe };
+export function getStripeClient(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('STRIPE_SECRET_KEY is not configured');
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-05-27.dahlia',
+      typescript: true,
+    });
+  }
+  return _stripe;
+}
 
 interface PaymentIntentInput {
   amount: number;
@@ -39,21 +47,21 @@ export const createPaymentIntent = async (input: PaymentIntentInput & { customer
       paymentIntentParams.customer = input.customerId;
     }
 
-    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+    const paymentIntent = await getStripeClient().paymentIntents.create(paymentIntentParams);
 
     return {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
     };
   } catch (error) {
-    logger.error('Stripe payment intent creation error:', error);
+    logger.error({ err: error }, 'Stripe payment intent creation error');
     throw new Error('Failed to create payment intent');
   }
 };
 
 export const confirmPayment = async (paymentIntentId: string) => {
   try {
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentIntent = await getStripeClient().paymentIntents.retrieve(paymentIntentId);
     
     if (paymentIntent.status === 'succeeded') {
       return {
@@ -67,14 +75,14 @@ export const confirmPayment = async (paymentIntentId: string) => {
       status: paymentIntent.status,
     };
   } catch (error) {
-    logger.error('Stripe payment confirmation error:', error);
+    logger.error({ err: error }, 'Stripe payment confirmation error');
     throw new Error('Failed to confirm payment');
   }
 };
 
 export const createCustomer = async (input: CustomerInput) => {
   try {
-    const customer = await stripe.customers.create({
+    const customer = await getStripeClient().customers.create({
       email: input.email,
       name: input.name,
       metadata: input.metadata,
@@ -85,7 +93,7 @@ export const createCustomer = async (input: CustomerInput) => {
       customer,
     };
   } catch (error) {
-    logger.error('Stripe customer creation error:', error);
+    logger.error({ err: error }, 'Stripe customer creation error');
     throw new Error('Failed to create customer');
   }
 };
@@ -101,7 +109,7 @@ export const getOrCreateCustomer = async (userId: string, email: string, name?: 
 
     if (user?.stripeCustomerId) {
       // Retrieve existing customer
-      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      const customer = await getStripeClient().customers.retrieve(user.stripeCustomerId);
       return {
         customerId: user.stripeCustomerId,
         customer,
@@ -110,7 +118,7 @@ export const getOrCreateCustomer = async (userId: string, email: string, name?: 
     }
 
     // Create new customer
-    const newCustomer = await stripe.customers.create({
+    const newCustomer = await getStripeClient().customers.create({
       email,
       name: name || email,
       metadata: {
@@ -132,7 +140,7 @@ export const getOrCreateCustomer = async (userId: string, email: string, name?: 
       created: true,
     };
   } catch (error) {
-    logger.error('Stripe get or create customer error:', error);
+    logger.error({ err: error }, 'Stripe get or create customer error');
     throw new Error('Failed to get or create customer');
   }
 };
@@ -143,72 +151,72 @@ export const updateCustomer = async (customerId: string, updates: {
   metadata?: Record<string, string>;
 }) => {
   try {
-    const customer = await stripe.customers.update(customerId, updates);
+    const customer = await getStripeClient().customers.update(customerId, updates);
     return {
       customerId: customer.id,
       customer,
     };
   } catch (error) {
-    logger.error('Stripe customer update error:', error);
+    logger.error({ err: error }, 'Stripe customer update error');
     throw new Error('Failed to update customer');
   }
 };
 
 export const getCustomer = async (customerId: string) => {
   try {
-    const customer = await stripe.customers.retrieve(customerId);
+    const customer = await getStripeClient().customers.retrieve(customerId);
     return customer;
   } catch (error) {
-    logger.error('Stripe customer retrieval error:', error);
+    logger.error({ err: error }, 'Stripe customer retrieval error');
     throw new Error('Failed to retrieve customer');
   }
 };
 
 export const listCustomerPaymentMethods = async (customerId: string) => {
   try {
-    const paymentMethods = await stripe.paymentMethods.list({
+    const paymentMethods = await getStripeClient().paymentMethods.list({
       customer: customerId,
       type: 'card',
     });
     return paymentMethods;
   } catch (error) {
-    logger.error('Stripe payment methods list error:', error);
+    logger.error({ err: error }, 'Stripe payment methods list error');
     throw new Error('Failed to list payment methods');
   }
 };
 
 export const attachPaymentMethod = async (paymentMethodId: string, customerId: string) => {
   try {
-    const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+    const paymentMethod = await getStripeClient().paymentMethods.attach(paymentMethodId, {
       customer: customerId,
     });
     return paymentMethod;
   } catch (error) {
-    logger.error('Stripe payment method attach error:', error);
+    logger.error({ err: error }, 'Stripe payment method attach error');
     throw new Error('Failed to attach payment method');
   }
 };
 
 export const detachPaymentMethod = async (paymentMethodId: string) => {
   try {
-    const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
+    const paymentMethod = await getStripeClient().paymentMethods.detach(paymentMethodId);
     return paymentMethod;
   } catch (error) {
-    logger.error('Stripe payment method detach error:', error);
+    logger.error({ err: error }, 'Stripe payment method detach error');
     throw new Error('Failed to detach payment method');
   }
 };
 
 export const setDefaultPaymentMethod = async (customerId: string, paymentMethodId: string) => {
   try {
-    const customer = await stripe.customers.update(customerId, {
+    const customer = await getStripeClient().customers.update(customerId, {
       invoice_settings: {
         default_payment_method: paymentMethodId,
       },
     });
     return customer;
   } catch (error) {
-    logger.error('Stripe set default payment method error:', error);
+    logger.error({ err: error }, 'Stripe set default payment method error');
     throw new Error('Failed to set default payment method');
   }
 };
@@ -221,7 +229,7 @@ export const handleWebhook = async (payload: string, signature: string) => {
   }
 
   try {
-    const event = stripe.webhooks.constructEvent(
+    const event = getStripeClient().webhooks.constructEvent(
       payload,
       signature,
       webhookSecret
@@ -229,17 +237,17 @@ export const handleWebhook = async (payload: string, signature: string) => {
 
     return event;
   } catch (error) {
-    logger.error('Stripe webhook verification error:', error);
+    logger.error({ err: error }, 'Stripe webhook verification error');
     throw new Error('Invalid webhook signature');
   }
 };
 
 export const refundPayment = async (paymentIntentId: string, amount?: number) => {
   try {
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentIntent = await getStripeClient().paymentIntents.retrieve(paymentIntentId);
     
     // Create refund using payment intent
-    const refund = await stripe.refunds.create({
+    const refund = await getStripeClient().refunds.create({
       payment_intent: paymentIntentId,
       amount: amount ? Math.round(amount * 100) : undefined,
     });
@@ -249,7 +257,7 @@ export const refundPayment = async (paymentIntentId: string, amount?: number) =>
       refund,
     };
   } catch (error) {
-    logger.error('Stripe refund error:', error);
+    logger.error({ err: error }, 'Stripe refund error');
     throw new Error('Failed to process refund');
   }
 };
@@ -257,10 +265,10 @@ export const refundPayment = async (paymentIntentId: string, amount?: number) =>
 // Get payment method details (for display purposes)
 export const getPaymentMethod = async (paymentMethodId: string) => {
   try {
-    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    const paymentMethod = await getStripeClient().paymentMethods.retrieve(paymentMethodId);
     return paymentMethod;
   } catch (error) {
-    logger.error('Stripe payment method retrieval error:', error);
+    logger.error({ err: error }, 'Stripe payment method retrieval error');
     throw new Error('Failed to retrieve payment method');
   }
 };
@@ -272,7 +280,7 @@ export const createSubscription = async (
   paymentMethodId: string
 ) => {
   try {
-    const subscription = await stripe.subscriptions.create({
+    const subscription = await getStripeClient().subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
       default_payment_method: paymentMethodId,
@@ -283,7 +291,7 @@ export const createSubscription = async (
       subscription,
     };
   } catch (error) {
-    logger.error('Stripe subscription creation error:', error);
+    logger.error({ err: error }, 'Stripe subscription creation error');
     throw new Error('Failed to create subscription');
   }
 };

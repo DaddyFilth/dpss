@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Users fetch error:', error);
+    logger.error({ err: error }, 'Users fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch users' },
       { status: 500, headers: getSecurityHeaders() }

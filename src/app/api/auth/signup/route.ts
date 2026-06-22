@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Signup error:', error);
+    logger.error({ err: error }, 'Signup error');
     return NextResponse.json(
       { error: 'Failed to create admin account' },
       { status: 500, headers: getSecurityHeaders() }

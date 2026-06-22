@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI product finder error:', error);
+    logger.error({ err: error }, 'AI product finder error');
     return NextResponse.json(
       { error: 'Failed to analyze products' },
       { status: 500, headers: getSecurityHeaders() }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI product analysis error:', error);
+    logger.error({ err: error }, 'AI product analysis error');
     return NextResponse.json(
       { error: 'Failed to analyze products' },
       { status: 500, headers: getSecurityHeaders() }

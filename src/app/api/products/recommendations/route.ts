@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Recommendations error:', error);
+    logger.error({ err: error }, 'Recommendations error');
     return NextResponse.json(
       { error: 'Failed to fetch recommendations' },
       { status: 500, headers: getSecurityHeaders() }
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI update error:', error);
+    logger.error({ err: error }, 'AI update error');
     return NextResponse.json(
       { error: 'Failed to update AI recommendations' },
       { status: 500, headers: getSecurityHeaders() }

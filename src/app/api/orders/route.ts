@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Order creation error:', error);
+    logger.error({ err: error }, 'Order creation error');
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500, headers: getSecurityHeaders() }
@@ -310,7 +310,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Orders fetch error:', error);
+    logger.error({ err: error }, 'Orders fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500, headers: getSecurityHeaders() }

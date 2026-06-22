@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Failed to fetch social accounts:', error);
+    logger.error({ err: error }, 'Failed to fetch social accounts');
     return NextResponse.json(
       { error: 'Failed to fetch accounts' },
       { status: 500, headers: getSecurityHeaders() }

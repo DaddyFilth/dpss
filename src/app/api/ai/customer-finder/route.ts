@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI customer finder error:', error);
+    logger.error({ err: error }, 'AI customer finder error');
     return NextResponse.json(
       { error: 'Failed to generate customer targeting strategy' },
       { status: 500, headers: getSecurityHeaders() }
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI customer finder error:', error);
+    logger.error({ err: error }, 'AI customer finder error');
     return NextResponse.json(
       { error: 'Failed to get customer targeting data' },
       { status: 500, headers: getSecurityHeaders() }

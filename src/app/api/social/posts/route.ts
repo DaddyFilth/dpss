@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Failed to create social post:', error);
+    logger.error({ err: error }, 'Failed to create social post');
     return NextResponse.json(
       { error: 'Failed to create post' },
       { status: 500, headers: getSecurityHeaders() }
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Failed to fetch social posts:', error);
+    logger.error({ err: error }, 'Failed to fetch social posts');
     return NextResponse.json(
       { error: 'Failed to fetch posts' },
       { status: 500, headers: getSecurityHeaders() }

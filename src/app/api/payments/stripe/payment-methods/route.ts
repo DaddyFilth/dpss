@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Payment methods list error:', error);
+    logger.error({ err: error }, 'Payment methods list error');
     return NextResponse.json(
       { error: 'Failed to list payment methods' },
       { status: 500, headers: getSecurityHeaders() }
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Payment method attach error:', error);
+    logger.error({ err: error }, 'Payment method attach error');
     return NextResponse.json(
       { error: 'Failed to attach payment method' },
       { status: 500, headers: getSecurityHeaders() }

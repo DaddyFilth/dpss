@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error(`[${requestId}] Stripe webhook error:`, error);
+    logger.error({ err: error, requestId }, 'Stripe webhook error');
     return NextResponse.json(
       { error: 'Webhook handler failed' },
       { status: 500, headers: getSecurityHeaders() }

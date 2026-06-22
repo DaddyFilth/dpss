@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Cart fetch error:', error);
+    logger.error({ err: error }, 'Cart fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Cart update error:', error);
+    logger.error({ err: error }, 'Cart update error');
     return NextResponse.json(
       { error: 'Failed to update cart' },
       { status: 500, headers: getSecurityHeaders() }
@@ -254,7 +254,7 @@ export async function DELETE(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Cart item removal error:', error);
+    logger.error({ err: error }, 'Cart item removal error');
     return NextResponse.json(
       { error: 'Failed to remove item' },
       { status: 500, headers: getSecurityHeaders() }

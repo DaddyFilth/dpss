@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Printing sources fetch error:', error);
+    logger.error({ err: error }, 'Printing sources fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch printing sources' },
       { status: 500, headers: getSecurityHeaders() }
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     const encryptedData = await encryptFields('PrintingSource', sanitizedData);
 
     const printingSource = await prisma.printingSource.create({
-      data: encryptedData,
+      data: encryptedData as typeof sanitizedData,
     });
 
     // Log creation
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       { status: 201, headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Printing source creation error:', error);
+    logger.error({ err: error }, 'Printing source creation error');
     return NextResponse.json(
       { error: 'Failed to create printing source' },
       { status: 500, headers: getSecurityHeaders() }

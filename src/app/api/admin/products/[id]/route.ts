@@ -60,7 +60,7 @@ export async function GET(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Product fetch error:', error);
+    logger.error({ err: error }, 'Product fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500, headers: getSecurityHeaders() }
@@ -156,7 +156,7 @@ export async function PUT(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Product update error:', error);
+    logger.error({ err: error }, 'Product update error');
     return NextResponse.json(
       { error: 'Failed to update product' },
       { status: 500, headers: getSecurityHeaders() }
@@ -212,7 +212,7 @@ export async function DELETE(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Product deletion error:', error);
+    logger.error({ err: error }, 'Product deletion error');
     return NextResponse.json(
       { error: 'Failed to delete product' },
       { status: 500, headers: getSecurityHeaders() }

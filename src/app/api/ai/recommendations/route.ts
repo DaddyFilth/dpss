@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI recommendations error:', error);
+    logger.error({ err: error }, 'AI recommendations error');
     return NextResponse.json(
       { error: 'Failed to generate recommendations' },
       { status: 500, headers: getSecurityHeaders() }
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('AI recommendations error:', error);
+    logger.error({ err: error }, 'AI recommendations error');
     return NextResponse.json(
       { error: 'Failed to fetch recommendations' },
       { status: 500, headers: getSecurityHeaders() }

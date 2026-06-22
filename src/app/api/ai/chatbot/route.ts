@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Chatbot error:', error);
+    logger.error({ err: error }, 'Chatbot error');
     return NextResponse.json(
       { error: 'Failed to process message' },
       { status: 500, headers: getSecurityHeaders() }

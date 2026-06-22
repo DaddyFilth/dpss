@@ -69,7 +69,7 @@ export async function GET(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Order fetch error:', error);
+    logger.error({ err: error }, 'Order fetch error');
     return NextResponse.json(
       { error: 'Failed to fetch order' },
       { status: 500, headers: getSecurityHeaders() }
@@ -141,7 +141,7 @@ export async function PUT(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Order update error:', error);
+    logger.error({ err: error }, 'Order update error');
     return NextResponse.json(
       { error: 'Failed to update order' },
       { status: 500, headers: getSecurityHeaders() }

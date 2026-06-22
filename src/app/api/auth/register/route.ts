@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    logger.error('Registration error:', error);
+    logger.error({ err: error }, 'Registration error');
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

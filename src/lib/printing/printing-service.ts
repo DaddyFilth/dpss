@@ -137,7 +137,7 @@ export class PrintingService {
 
       return printOrder;
     } catch (error) {
-      logger.error('Failed to create print order:', error);
+      logger.error({ err: error }, 'Failed to create print order');
       throw error;
     }
   }
@@ -212,7 +212,7 @@ export class PrintingService {
       
       return null;
     } catch (error) {
-      logger.error('Failed to get print order status:', error);
+      logger.error({ err: error }, 'Failed to get print order status');
       throw error;
     }
   }

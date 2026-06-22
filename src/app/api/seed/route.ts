@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
         // Run the seed script
         const { stdout, stderr } = await execAsync('npx prisma db seed');
         
-        logger.info('Seeding stdout:', stdout);
-        if (stderr) logger.info('Seeding stderr:', stderr);
+        logger.info({ stdout }, 'Seeding completed');
+        if (stderr) logger.warn({ stderr }, 'Seeding stderr output');
         
         return NextResponse.json(
           { 
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
           { headers: getSecurityHeaders() }
         );
       } catch (error: any) {
-        logger.error('Seeding error:', error);
+        logger.error({ err: error }, 'Seeding error');
         return NextResponse.json(
           { 
             error: 'Seeding failed', 
@@ -82,12 +82,12 @@ export async function POST(request: NextRequest) {
       try {
         // Reset database (drop and recreate)
         const { stdout: resetOutput } = await execAsync('npx prisma db push --force-reset');
-        logger.info('Reset output:', resetOutput);
+        logger.info({ output: resetOutput }, 'Database reset completed');
         
         // Then seed
         const { stdout, stderr } = await execAsync('npx prisma db seed');
-        logger.info('Seeding stdout:', stdout);
-        if (stderr) logger.info('Seeding stderr:', stderr);
+        logger.info({ stdout }, 'Seeding completed');
+        if (stderr) logger.warn({ stderr }, 'Seeding stderr output');
         
         return NextResponse.json(
           { 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           { headers: getSecurityHeaders() }
         );
       } catch (error: any) {
-        logger.error('Reset and seeding error:', error);
+        logger.error({ err: error }, 'Reset and seeding error');
         return NextResponse.json(
           { 
             error: 'Reset and seeding failed', 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    logger.error('Seed API error:', error);
+    logger.error({ err: error }, 'Seed API error');
     return NextResponse.json(
       { error: 'Failed to process seed request' },
       { status: 500, headers: getSecurityHeaders() }

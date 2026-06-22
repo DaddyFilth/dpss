@@ -55,7 +55,7 @@ export async function PATCH(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Set default payment method error:', error);
+    logger.error({ err: error }, 'Set default payment method error');
     return NextResponse.json(
       { error: 'Failed to set default payment method' },
       { status: 500, headers: getSecurityHeaders() }
@@ -97,7 +97,7 @@ export async function DELETE(
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Detach payment method error:', error);
+    logger.error({ err: error }, 'Detach payment method error');
     return NextResponse.json(
       { error: 'Failed to detach payment method' },
       { status: 500, headers: getSecurityHeaders() }

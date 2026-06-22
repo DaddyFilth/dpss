@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
-    logger.error('Failed to fetch products:', error);
+    logger.error({ err: error }, 'Failed to fetch products');
     return NextResponse.json(
       { error: 'Failed to fetch products' },
       { status: 500, headers: getSecurityHeaders() }
