@@ -7,6 +7,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth.config';
 import { getSessionRole, isAdminRole } from '@/lib/auth/roles';
 import { z } from 'zod';
+import { encryptFields, decryptFields } from '@/lib/security/field-encryption';
 
 const printingSourceSchema = z.object({
   name: z.string().min(1),
@@ -57,8 +58,12 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
+    const decryptedSources = await Promise.all(
+      printingSources.map(source => decryptFields('PrintingSource', source))
+    );
+
     return NextResponse.json(
-      { printingSources },
+      { printingSources: decryptedSources },
       { headers: getSecurityHeaders() }
     );
   } catch (error) {
@@ -108,8 +113,10 @@ export async function POST(request: NextRequest) {
       ...rest,
     };
 
+    const encryptedData = await encryptFields('PrintingSource', sanitizedData);
+
     const printingSource = await prisma.printingSource.create({
-      data: sanitizedData,
+      data: encryptedData,
     });
 
     // Log creation
