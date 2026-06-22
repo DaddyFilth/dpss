@@ -33,7 +33,7 @@ async function getProduct(productId: string): Promise<ProductData> {
 export async function startCheckoutSession(productId: string) {
   try {
     // Rate limiting
-    const headersList = headers()
+    const headersList = await headers()
     const ip = getClientIP({ headers: headersList } as any)
     const rateLimitResult = await rateLimit(ip, 'checkout-session', 10, 60000)
     
@@ -94,7 +94,7 @@ export async function startCheckoutSession(productId: string) {
 export async function startCheckoutSessionForCart(cartId: string) {
   try {
     // Rate limiting
-    const headersList = headers()
+    const headersList = await headers()
     const ip = getClientIP({ headers: headersList } as any)
     const rateLimitResult = await rateLimit(ip, 'checkout-cart', 5, 60000)
     

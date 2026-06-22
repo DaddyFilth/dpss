@@ -62,15 +62,18 @@ export const sanitizeSearchQuery = (input: string): string => {
 };
 
 /**
- * Sanitizes URL parameters to prevent open redirects.
+ * Sanitizes URL parameters to prevent open redirects and dangerous protocols.
  */
 export const sanitizeUrl = (url: string): string => {
   if (!url) return '';
-  const sanitized = DOMPurify.sanitize(url, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-  if (!sanitized.match(/^https?:\/\//i)) {
+  const trimmed = url.trim();
+  if (/^(javascript|data|vbscript):/i.test(trimmed)) {
     return '';
   }
-  return sanitized;
+  if (!trimmed.match(/^https?:\/\//i)) {
+    return '';
+  }
+  return trimmed;
 };
 
 /**
