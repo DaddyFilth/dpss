@@ -20,11 +20,13 @@ const Switch = React.memo(function Switch({
     }
   }, [checked, disabled, onCheckedChange])
 
+  const ariaChecked: 'true' | 'false' = checked ? 'true' : 'false'
+
   return (
     <button
       type="button"
       role="switch"
-      aria-checked={checked ? 'true' : 'false'}
+      aria-checked={ariaChecked}
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={handleClick}
