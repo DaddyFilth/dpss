@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { cn } from '@/lib/utils'
 
 interface SwitchProps {
   checked: boolean
@@ -7,7 +8,18 @@ interface SwitchProps {
   ariaLabel?: string
 }
 
-export function Switch({ checked, onCheckedChange, disabled = false, ariaLabel }: SwitchProps) {
+const Switch = React.memo(function Switch({
+  checked,
+  onCheckedChange,
+  disabled = false,
+  ariaLabel,
+}: SwitchProps) {
+  const handleClick = React.useCallback(() => {
+    if (!disabled) {
+      onCheckedChange(!checked)
+    }
+  }, [checked, disabled, onCheckedChange])
+
   return (
     <button
       type="button"
@@ -15,16 +27,23 @@ export function Switch({ checked, onCheckedChange, disabled = false, ariaLabel }
       aria-checked={checked ? 'true' : 'false'}
       aria-label={ariaLabel}
       disabled={disabled}
-      onClick={() => !disabled && onCheckedChange(!checked)}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        checked ? 'bg-blue-600' : 'bg-gray-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      onClick={handleClick}
+      className={cn(
+        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+        checked ? 'bg-blue-600' : 'bg-gray-200',
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      )}
     >
       <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+        className={cn(
+          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
           checked ? 'translate-x-6' : 'translate-x-1'
-        }`}
+        )}
       />
     </button>
   )
-}
+})
+
+Switch.displayName = 'Switch'
+
+export { Switch }

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Upload, Type, Palette, Image as ImageIcon, Download, RotateCw } from 'lucide-react';
 import Image from 'next/image';
+import styles from './product-customizer.module.css';
 
 export interface CustomizationData {
   customText?: string;
@@ -241,8 +242,8 @@ export const ProductCustomizer = ({
                       {customizationData.customColors?.map((color) => (
                         <div
                           key={color}
-                          className="w-10 h-10 rounded-full border-2 border-white shadow cursor-pointer relative"
-                          style={{ backgroundColor: color }}
+                          className={styles.colorCircle}
+                          style={{ '--color': color } as React.CSSProperties}
                         >
                           <button
                             onClick={() => removeColor(color)}
@@ -264,8 +265,8 @@ export const ProductCustomizer = ({
                         <div
                           key={color}
                           onClick={() => handleColorChange(color)}
-                          className="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-primary"
-                          style={{ backgroundColor: color }}
+                          className={styles.presetColorCircle}
+                          style={{ '--color': color } as React.CSSProperties}
                         />
                       ))}
                     </div>
