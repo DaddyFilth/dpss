@@ -243,7 +243,7 @@ export const ProductCustomizer = ({
                         <div
                           key={color}
                           className={styles.colorCircle}
-                          style={{ '--color': color } as React.CSSProperties}
+                          data-color={color}
                         >
                           <button
                             onClick={() => removeColor(color)}
@@ -266,7 +266,7 @@ export const ProductCustomizer = ({
                           key={color}
                           onClick={() => handleColorChange(color)}
                           className={styles.presetColorCircle}
-                          style={{ '--color': color } as React.CSSProperties}
+                          data-color={color}
                         />
                       ))}
                     </div>
