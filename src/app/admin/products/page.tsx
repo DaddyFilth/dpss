@@ -20,10 +20,6 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   const fetchProducts = async () => {
     try {
       const response = await fetch('/api/products');
@@ -35,6 +31,10 @@ export default function ProductsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleDelete = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
@@ -97,6 +97,7 @@ export default function ProductsPage() {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 rounded-md border border-input bg-background"
+              aria-label="Filter by category"
             >
               <option value="">All Categories</option>
               {categories.map(category => (

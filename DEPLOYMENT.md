@@ -8,18 +8,19 @@ This guide will help you deploy your AI Dropship site. You can choose between:
 ## 🚀 Prisma Compute Deployment (Recommended)
 
 ### Overview
+
 Prisma Compute provides seamless deployment integration with your Prisma database and offers automatic scaling, built-in monitoring, and simplified environment management.
 
 ### Step 1: Set Up Prisma Compute Account
 
-1. Go to https://www.prisma.io/cloud
+1. Go to <https://www.prisma.io/cloud>
 2. Create an account or sign in
 3. Navigate to Prisma Compute section
 4. Create a new Compute Service for your Next.js application
 
 ### Step 2: Configure GitHub Secrets
 
-Add the following secrets to your GitHub repository (`https://github.com/DaddyFilth/dpss/settings/secrets/actions`):
+Add the following secrets to your GitHub repository (`<https://github.com/DaddyFilth/dpss/settings/secrets/actions>`):
 
 1. **PRISMA_API_TOKEN**
    - Get from: Prisma Cloud Dashboard → API Settings
@@ -34,6 +35,7 @@ Add the following secrets to your GitHub repository (`https://github.com/DaddyFi
 Ensure your application has these environment variables configured (in Prisma Compute dashboard):
 
 **Required Variables:**
+
 ```env
 DATABASE_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require
 NEXTAUTH_URL=https://your-app.prisma.cloud
@@ -44,16 +46,15 @@ NEXT_PUBLIC_APP_URL=https://your-app.prisma.cloud
 ```
 
 **Payment Variables:**
+
 ```env
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_your_stripe_key
 STRIPE_SECRET_KEY=sk_your_stripe_secret
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-PAYPAL_CLIENT_ID=your_paypal_client_id
-PAYPAL_CLIENT_SECRET=your_paypal_client_secret
-PAYPAL_MODE=sandbox
 ```
 
 **Social Media OAuth:**
+
 ```env
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -68,6 +69,7 @@ PINTEREST_CLIENT_SECRET=your_pinterest_client_secret
 ```
 
 **Optional AI Services:**
+
 ```env
 OPENAI_API_KEY=your_openai_api_key
 ```
@@ -83,11 +85,12 @@ OPENAI_API_KEY=your_openai_api_key
    - Format: `postgresql://user:password@host:5432/database?sslmode=require`
 
 3. **Initialize Database Schema**
-   ```bash
-   # Locally with production database URL
-   export DATABASE_URL="your_production_database_url"
-   npx prisma db push
-   ```
+
+```bash
+# Locally with production database URL
+export DATABASE_URL="your_production_database_url"
+npx prisma db push
+```
 
 ### Step 5: Automatic Deployment
 
@@ -105,17 +108,21 @@ Once configured, deployment is automatic:
 
 ### Step 6: Post-Deployment Setup
 
-1. **Update NextAuth Configuration**
+1. **Configure NextAuth**
    - Ensure `NEXTAUTH_URL` matches your Prisma Compute domain
-   - Update `NEXT_PUBLIC_APP_URL` accordingly
+   - Set `NEXT_PUBLIC_APP_URL` accordingly
 
 2. **Configure Webhooks**
+
    - Stripe webhook endpoint: `https://your-app.prisma.cloud/api/payments/stripe/webhook`
-   - Update webhook secret in environment variables
+   - Set the webhook secret in environment variables
 
 3. **Create Admin User**
+
    ```sql
-   -- Connect to your database and run:
+   -- Example: connect to your database and grant admin access
+   -- NOTE: This is a documentation example only — review before executing
+   -- WARNING: Always use a WHERE clause to avoid mass updates
    UPDATE "User" SET role = 'ADMIN' WHERE email = 'your@email.com';
    ```
 
@@ -132,11 +139,10 @@ Once configured, deployment is automatic:
 
 ## 📋 Prerequisites
 
-1. ✅ GitHub repository: https://github.com/DaddyFilth/dpss
-2. ✅ Prisma Compute account (sign up at https://www.prisma.io/cloud) OR Vercel account (https://vercel.com)
+1. ✅ GitHub repository: <https://github.com/DaddyFilth/dpss>
+2. ✅ Prisma Compute account (sign up at <https://www.prisma.io/cloud>) OR Vercel account (<https://vercel.com>)
 3. ✅ PostgreSQL database (Neon, Supabase, or Railway)
 4. ✅ Stripe account (for payments)
-5. ✅ PayPal account (for payments)
 
 ## 🚀 Vercel Deployment (Alternative)
 
@@ -166,14 +172,13 @@ nano .env.vercel
 ```
 
 Replace:
+
 - `your_32_character_random_secret_here` with your generated NEXTAUTH_SECRET
 - `your_32_character_encryption_key_here` with your generated ENCRYPTION_KEY
 - `postgresql://user:password@host:5432/database_name` with your database URL
 - `your_stripe_publishable_key` with your Stripe public key
 - `your_stripe_secret_key` with your Stripe secret key
 - `your_stripe_webhook_secret` with your Stripe webhook secret
-- `your_paypal_client_id` with your PayPal client ID
-- `your_paypal_client_secret` with your PayPal client secret
 - `https://your-project.vercel.app` with your actual Vercel domain
 
 ### Option B: Use JSON Format
@@ -185,7 +190,7 @@ Edit `vercel-env-import.json` with the same replacements.
 ### Method 1: Vercel Dashboard (Recommended)
 
 1. **Import Repository**
-   - Go to https://vercel.com/new
+   - Go to <https://vercel.com/new>
    - Select "DaddyFilth/dpss" from your repositories
    - Click "Import"
 
@@ -222,14 +227,14 @@ vercel --prod
 
 ### Neon (Recommended - Free)
 
-1. Go to https://neon.tech
+1. Go to <https://neon.tech>
 2. Create account → New Project
 3. Copy connection string
 4. Add to Vercel as `DATABASE_URL`
 
 ### Alternative: Supabase (Free)
 
-1. Go to https://supabase.com
+1. Go to <https://supabase.com>
 2. Create project
 3. Get connection string from Project Settings → Database
 4. Add to Vercel as `DATABASE_URL`
@@ -238,7 +243,7 @@ vercel --prod
 
 ### Stripe Setup
 
-1. Go to https://dashboard.stripe.com
+1. Go to <https://dashboard.stripe.com>
 2. Create account → Get API keys from Developers → API keys
 3. For testing, use test mode keys (start with `pk_test_` and `sk_test_`)
 4. For webhook secret:
@@ -247,38 +252,27 @@ vercel --prod
    - Select events: `payment_intent.succeeded`, `payment_intent.payment_failed`, `charge.refunded`
    - Copy signing secret → Add as `STRIPE_WEBHOOK_SECRET`
 
-### PayPal Setup
-
-1. Go to https://developer.paypal.com/dashboard
-2. Create App → Get credentials
-3. For testing, use sandbox credentials
-4. Add to Vercel:
-   - `PAYPAL_CLIENT_ID`
-   - `PAYPAL_CLIENT_SECRET`
-   - `PAYPAL_MODE=sandbox`
-
 ### 🔧 Step 6: Final Deployment Configuration
 
-### Critical Environment Variables to Update
+### Critical Environment Variables to Configure
 
 **After Vercel assigns your domain:**
 
 1. **Copy your Vercel domain** (e.g., `dpss-xyz.vercel.app`)
-2. **Update in Vercel Environment Variables:**
-   ```
-   NEXTAUTH_URL=https://dpss-xyz.vercel.app
-   NEXT_PUBLIC_APP_URL=https://dpss-xyz.vercel.app
-   ```
+
+2. **Configure in Vercel Environment Variables:**
+
+    ```env
+    NEXTAUTH_URL=https://dpss-xyz.vercel.app
+    NEXT_PUBLIC_APP_URL=https://dpss-xyz.vercel.app
+    ```
 
 ### Redeploy
 
 After updating environment variables, trigger a new deployment:
+
 - In Vercel dashboard → Deployments → Redeploy
 - Or push a small change to GitHub
-
-### 🗄️ Step 7: Initialize Database
-
-Once deployed, set up your database schema:
 
 ```bash
 # Install Prisma CLI
@@ -294,14 +288,9 @@ npx prisma generate
 npx prisma db push
 ```
 
-**For Vercel deployment**, you can also:
-- Use Vercel's built-in terminal
-- Add a post-deploy script
-- Or run this locally with your production database URL
-
 ### ✅ Step 8: Test Your Deployment
 
-1. **Check main page**: https://dpss-xyz.vercel.app
+1. **Check main page**: <https://dpss-xyz.vercel.app>
 2. **Test authentication**: Try signing up
 3. **Test admin access**:
    - First user needs admin role (set manually in database)
@@ -318,6 +307,9 @@ To access the admin dashboard, you need an admin account:
 After deployment, connect to your database and run:
 
 ```sql
+-- Verify the target user exists first (SELECT is non-destructive):
+-- SELECT id, email FROM "User" WHERE email = 'your@email.com';
+-- Grant admin role to the verified user:
 UPDATE "User" SET role = 'ADMIN' WHERE email = 'your@email.com';
 ```
 
@@ -343,7 +335,6 @@ VALUES (
 - [ ] NEXTAUTH_URL matches Vercel domain
 - [ ] NEXT_PUBLIC_APP_URL matches Vercel domain
 - [ ] Stripe webhook configured
-- [ ] PayPal sandbox working
 - [ ] Admin account created
 - [ ] All pages load correctly
 - [ ] Authentication working
@@ -352,20 +343,20 @@ VALUES (
 ### 🔄 Environment Variables Reference
 
 ### Required Variables
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXTAUTH_URL` - Your Vercel domain
 - `NEXTAUTH_SECRET` - Random 32+ character string
 - `ENCRYPTION_KEY` - Random 32 character string
 
 ### Payment Variables
+
 - `STRIPE_PUBLIC_KEY` - Stripe publishable key
 - `STRIPE_SECRET_KEY` - Stripe secret key
 - `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret
-- `PAYPAL_CLIENT_ID` - PayPal client ID
-- `PAYPAL_CLIENT_SECRET` - PayPal client secret
-- `PAYPAL_MODE` - sandbox or live
 
 ### Optional Variables
+
 - `OPENAI_API_KEY` - For AI recommendations
 - `RATE_LIMIT_MAX_REQUESTS` - Default: 100
 - `RATE_LIMIT_WINDOW_MS` - Default: 900000
@@ -373,31 +364,35 @@ VALUES (
 ### 🚨 Troubleshooting
 
 ### Build Failures
+
 - Check environment variables are set correctly
 - Verify database connection string format
 - Check Prisma client generation
 
 ### Runtime Errors
+
 - Check Vercel function logs
 - Verify database connectivity
 - Ensure NEXTAUTH_URL is correct
 
 ### Authentication Issues
+
 - Verify NEXTAUTH_SECRET is set
 - Check NEXTAUTH_URL matches domain
 - Ensure database sessions table exists
 
 ### Payment Errors
+
 - Verify API keys are correct
 - Check webhook endpoint is accessible
 - Ensure webhook secret matches
 
-### 🎉 Success!
+### 🎉 Success
 
-Your AI-powered dropshipping site is now live on Vercel! 
+Your AI-powered dropshipping site is now live on Vercel!
 
-**Your admin dashboard:** https://dpss-xyz.vercel.app/admin
-**Your storefront:** https://dpss-xyz.vercel.app
+**Your admin dashboard:** <https://dpss-xyz.vercel.app/admin>
+**Your storefront:** <https://dpss-xyz.vercel.app>
 
 You can now:
 - Add products via admin panel

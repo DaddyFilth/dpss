@@ -49,3 +49,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Dynamic width/height utilities driven by CSS custom properties */
+.bar-fill {
+  width: var(--bar-width);
+  height: 100%;
+}
+
+.bar-item {
+  height: var(--bar-height);
+  width: 14%;
+}

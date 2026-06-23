@@ -4,8 +4,6 @@ import {
   ShoppingCart, 
   Users, 
   TrendingUp, 
-  TrendingDown,
-  Package,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
@@ -167,8 +165,8 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
                     <div
-                      className="bg-primary h-2 rounded-full transition-all"
-                      style={{ width: `${item.percentage}%` }}
+                      className="bg-primary h-2 rounded-full transition-all bar-fill"
+                      style={{ '--bar-width': `${item.percentage}%` } as React.CSSProperties}
                     />
                   </div>
                 </div>
@@ -214,15 +212,15 @@ export default async function AnalyticsPage() {
               <span className="text-green-500">+{analytics.averageOrder.growth}%</span>
               {' '}from last month
             </p>
-            <div className="mt-4 h-24 bg-secondary rounded-lg flex items-end justify-between p-2 gap-1">
-              {analytics.revenue.monthly.map((value, index) => (
-                <div
-                  key={index}
-                  className="bg-primary rounded-t-sm transition-all hover:bg-primary/80"
-                  style={{ height: `${(value / Math.max(...analytics.revenue.monthly)) * 100}%`, width: '14%' }}
-                />
-              ))}
-            </div>
+              <div className="mt-4 h-24 bg-secondary rounded-lg flex items-end justify-between p-2 gap-1">
+                {analytics.revenue.monthly.map((value, index) => (
+                  <div
+                    key={index}
+                    className="bg-primary rounded-t-sm transition-all hover:bg-primary/80 bar-item"
+                    style={{ '--bar-height': `${(value / Math.max(...analytics.revenue.monthly)) * 100}%` } as React.CSSProperties}
+                  />
+                ))}
+              </div>
           </CardContent>
         </Card>
 

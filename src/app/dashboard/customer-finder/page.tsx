@@ -388,8 +388,8 @@ export default function AICustomerTargetingDashboard() {
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all"
-                            style={{ width: `${amount}%` }}
+                            className="bg-blue-600 h-2 rounded-full transition-all w-[var(--bar-width)]"
+                            style={{ '--bar-width': `${amount}%` } as React.CSSProperties}
                           />
                         </div>
                       </div>
@@ -415,7 +415,7 @@ export default function AICustomerTargetingDashboard() {
                 <ul className="space-y-2">
                   {leadCapture.strategies.map((strategy: string, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
-                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
                       {strategy}
                     </li>
                   ))}
@@ -431,7 +431,7 @@ export default function AICustomerTargetingDashboard() {
                 <ul className="space-y-2">
                   {leadCapture.conversionOptimizations.map((opt: string, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
                       {opt}
                     </li>
                   ))}
