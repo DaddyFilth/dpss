@@ -7,6 +7,7 @@ import FacebookProvider from 'next-auth/providers/facebook';
 import TwitterProvider from 'next-auth/providers/twitter';
 import { compare } from 'bcryptjs';
 import { prisma } from '@/lib/utils/prisma';
+import { encryptFields } from '@/lib/security/field-encryption';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -124,6 +125,12 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signIn({ user, account, profile }) {
       if (account && profile) {
+        const tokenData = {
+          accessToken: account.access_token,
+          refreshToken: account.refresh_token,
+        };
+        const encryptedTokens = await encryptFields('SocialAccount', tokenData);
+
         await prisma.socialAccount.upsert({
           where: {
             userId_provider: {
@@ -132,8 +139,8 @@ export const authOptions: NextAuthOptions = {
             }
           },
           update: {
-            accessToken: account.access_token,
-            refreshToken: account.refresh_token,
+            accessToken: encryptedTokens.accessToken,
+            refreshToken: encryptedTokens.refreshToken,
             profile: profile as any,
             expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
           },
@@ -141,8 +148,8 @@ export const authOptions: NextAuthOptions = {
             userId: user.id!,
             provider: account.provider,
             providerAccountId: account.providerAccountId,
-            accessToken: account.access_token,
-            refreshToken: account.refresh_token,
+            accessToken: encryptedTokens.accessToken,
+            refreshToken: encryptedTokens.refreshToken,
             profile: profile as any,
             expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
           },

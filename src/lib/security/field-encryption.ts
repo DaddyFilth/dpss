@@ -27,7 +27,8 @@ export async function encryptFields(
       try {
         encrypted[field] = await encrypt(encrypted[field]);
       } catch (error) {
-        logger.error({ model, field, error }, 'Failed to encrypt field');
+        logger.error({ model, field, err: error }, 'Failed to encrypt field');
+        throw new Error(`Failed to encrypt sensitive field ${field} on ${model}`);
       }
     }
   }

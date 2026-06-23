@@ -1,5 +1,8 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import logger from '@/lib/logger';
+
+let memoryFallbackWarned = false;
 
 let redis: Redis | null = null;
 let rateLimiters: Map<string, Ratelimit> = new Map();
@@ -11,6 +14,10 @@ function getRedis(): Redis | null {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
+    if (!memoryFallbackWarned && process.env.NODE_ENV === 'production') {
+      logger.warn('Upstash Redis not configured — rate limiting uses in-memory fallback (ineffective in serverless)');
+      memoryFallbackWarned = true;
+    }
     return null;
   }
 
