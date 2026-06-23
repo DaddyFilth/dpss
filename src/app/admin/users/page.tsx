@@ -105,6 +105,7 @@ export default function UsersPage() {
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
               className="px-4 py-2 rounded-md border border-input bg-background"
+              aria-label="Filter by role"
             >
               <option value="">All Roles</option>
               <option value="CUSTOMER">Customer</option>
