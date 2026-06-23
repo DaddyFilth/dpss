@@ -386,11 +386,8 @@ export default function AICustomerTargetingDashboard() {
                           <span className="font-medium">{channel}</span>
                           <span className="text-sm text-gray-500">${amount}</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all w-[var(--bar-width)]"
-                            style={{ '--bar-width': `${amount}%` } as React.CSSProperties}
-                          />
+                        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                          <div className={`bg-blue-600 h-2 rounded-full transition-all bar-${Math.round(amount / 5) * 5}`} />
                         </div>
                       </div>
                     </div>

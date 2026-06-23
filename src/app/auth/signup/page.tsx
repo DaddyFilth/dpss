@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -118,9 +119,9 @@ export default function SignUpPage() {
 
           <div className="text-center text-sm text-gray-600">
             <p>Already have an admin account?{' '}
-              <a href="/auth/signin" className="text-blue-600 hover:underline">
+              <Link href="/auth/signin" className="text-blue-600 hover:underline">
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
         </CardContent>

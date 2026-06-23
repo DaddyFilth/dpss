@@ -12,7 +12,7 @@ export function Switch({ checked, onCheckedChange, disabled = false, ariaLabel }
     <button
       type="button"
       role="switch"
-      aria-checked={checked ? 'true' : 'false'}
+      aria-checked={checked}
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={() => !disabled && onCheckedChange(!checked)}

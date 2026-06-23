@@ -31,10 +31,6 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/admin/users');
@@ -46,6 +42,18 @@ export default function UsersPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      await fetchUsers();
+      if (!cancelled) {
+        // effect cleanup
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

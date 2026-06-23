@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { XCircle } from 'lucide-react'
 
@@ -16,18 +17,18 @@ export default function CheckoutCancelPage() {
             Your payment was cancelled. You can try again anytime.
           </p>
           <div className="space-y-2">
-            <a
+            <Link
               href="/"
               className="block w-full py-2 px-4 bg-primary text-primary-foreground rounded hover:opacity-90 text-center"
             >
               Return to Store
-            </a>
-            <a
+            </Link>
+            <Link
               href="/cart"
               className="block w-full py-2 px-4 border border-input rounded hover:bg-muted text-center"
             >
               View Cart
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

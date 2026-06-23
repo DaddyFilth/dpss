@@ -1,5 +1,6 @@
 import { Shield, Zap, Users, Target, Globe, Award } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AboutPage() {
   return (
@@ -172,18 +173,18 @@ export default function AboutPage() {
             Start building your AI-powered dropshipping store today with automated customer acquisition and intelligent product management.
           </p>
           <div className="flex gap-4 justify-center">
-            <a
+            <Link
               href="/products"
               className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               Browse Products
-            </a>
-            <a
+            </Link>
+            <Link
               href="/auth/signup"
               className="px-8 py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
             >
               Create Account
-            </a>
+            </Link>
           </div>
         </div>
       </section>

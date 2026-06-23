@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
+import styles from './page.module.css';
 
 async function getAnalyticsData() {
   // In a real app, these would come from the database with complex queries
@@ -165,8 +166,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
                     <div
-                      className="bg-primary h-2 rounded-full transition-all bar-fill"
-                      style={{ '--bar-width': `${item.percentage}%` } as React.CSSProperties}
+                      className={`bg-primary rounded-full transition-all ${styles.progressBar} ${styles[`progress-${item.percentage}`]}`}
                     />
                   </div>
                 </div>
@@ -213,13 +213,15 @@ export default async function AnalyticsPage() {
               {' '}from last month
             </p>
               <div className="mt-4 h-24 bg-secondary rounded-lg flex items-end justify-between p-2 gap-1">
-                {analytics.revenue.monthly.map((value, index) => (
-                  <div
-                    key={index}
-                    className="bg-primary rounded-t-sm transition-all hover:bg-primary/80 bar-item"
-                    style={{ '--bar-height': `${(value / Math.max(...analytics.revenue.monthly)) * 100}%` } as React.CSSProperties}
-                  />
-                ))}
+                {analytics.revenue.monthly.map((value, index) => {
+                  const barHeight = Math.round((value / Math.max(...analytics.revenue.monthly)) * 100);
+                  return (
+                    <div
+                      key={index}
+                      className={`bg-primary ${styles.chartBar} ${styles[`height-${barHeight}`]}`}
+                    />
+                  );
+                })}
               </div>
           </CardContent>
         </Card>

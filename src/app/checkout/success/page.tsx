@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Package, Clock } from 'lucide-react'
 
@@ -50,18 +51,18 @@ export default function CheckoutSuccessPage({
           )}
 
           <div className="space-y-2">
-            <a
+            <Link
               href="/"
               className="block w-full py-2 px-4 bg-primary text-primary-foreground rounded hover:opacity-90 text-center"
             >
               Continue Shopping
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/orders"
               className="block w-full py-2 px-4 border border-input rounded hover:bg-muted text-center"
             >
               View Orders
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

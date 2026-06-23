@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Shield, Zap, Users, TrendingUp, Calendar, Play, Pause, RefreshCw, Target, Mail, Share2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
@@ -16,18 +15,6 @@ export default function AutomationDashboard() {
   const [data, setData] = useState<any>(null);
   const [schedulerRunning, setSchedulerRunning] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (session) {
-      const userRole = session.user?.role;
-      if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
-        router.push('/');
-        return;
-      }
-      
-      fetchAutomationData();
-    }
-  }, [session, router]);
 
   const fetchAutomationData = async () => {
     try {
@@ -174,6 +161,18 @@ export default function AutomationDashboard() {
       setActionLoading(null);
     }
   };
+
+  useEffect(() => {
+    if (session) {
+      const userRole = session.user?.role;
+      if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+        router.push('/');
+        return;
+      }
+      
+      fetchAutomationData();
+    }
+  }, [session, router]);
 
   if (!session) {
     return (
