@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Fetch all products
     const products = await prisma.product.findMany({
       where: { stock: { gt: 0 } },
-    }).then(products => products.map(p => ({
+    }).then((products: any) => products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,

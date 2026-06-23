@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const items = hasMore ? products.slice(0, limit) : products;
     const nextCursor = hasMore ? items[items.length - 1].id : null;
 
-    const formattedProducts = items.map(p => ({
+    const formattedProducts = items.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,

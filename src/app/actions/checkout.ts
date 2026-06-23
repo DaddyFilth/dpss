@@ -119,7 +119,7 @@ export async function startCheckoutSessionForCart(cartId: string) {
     }
 
     // Convert cart items to line items
-    const lineItems = cart.items.map(item => {
+    const lineItems = cart.items.map((item: any) => {
       const priceInCents = Math.round(Number(item.product.price) * 100)
       return {
         price_data: {
@@ -136,7 +136,7 @@ export async function startCheckoutSessionForCart(cartId: string) {
     })
 
     // Calculate total
-    const totalAmount = lineItems.reduce((sum, item) => sum + (item.price_data.unit_amount * item.quantity), 0)
+    const totalAmount = lineItems.reduce((sum: number, item: any) => sum + (item.price_data.unit_amount * item.quantity), 0)
 
     // Create Checkout Session
     const session = await getStripeClient().checkout.sessions.create({

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       where: { stock: { gt: 0 } },
     });
 
-    const formattedProducts = products.map(p => ({
+    const formattedProducts = products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
       orderBy: { aiScore: 'desc' },
     });
 
-    const formattedProducts = products.map(p => ({
+    const formattedProducts = products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,

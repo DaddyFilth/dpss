@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       take: 50,
     });
 
-    const formattedProducts = products.map(p => ({
+    const formattedProducts = products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const formattedProducts = products.map(p => ({
+    const formattedProducts = products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,

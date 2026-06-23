@@ -106,8 +106,8 @@ export async function POST(request: NextRequest) {
 
     // Calculate order totals
     let subtotal = 0;
-    const orderItems = items.map(item => {
-      const product = products.find(p => p.id === item.productId);
+    const orderItems = items.map((item: any) => {
+      const product = products.find((p: any) => p.id === item.productId);
       if (!product) throw new Error('Product not found');
       
       const itemTotal = Number(product.price) * item.quantity;
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     // Check stock
     for (const item of items) {
-      const product = products.find(p => p.id === item.productId);
+      const product = products.find((p: any) => p.id === item.productId);
       if (!product || product.stock < item.quantity) {
         return NextResponse.json(
           { error: `Insufficient stock for ${product?.name}` },
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Create order with pending payment status
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       // Create order
       const newOrder = await tx.order.create({
         data: {
@@ -297,7 +297,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-    }).then(orders => orders.map((order: any) => ({
+    }).then((orders: any) => orders.map((order: any) => ({
       ...order,
       total: Number(order.total),
       subtotal: Number(order.subtotal),

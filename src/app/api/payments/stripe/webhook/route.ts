@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         
         // Handle checkout session completion
         if (session.metadata?.orderId) {
-          await prisma.$transaction(async (tx) => {
+          await prisma.$transaction(async (tx: any) => {
             const order = await tx.order.findUnique({
               where: { id: session.metadata.orderId },
             });
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         
         // Update order payment status
         if (paymentIntent.metadata.orderId) {
-          await prisma.$transaction(async (tx) => {
+          await prisma.$transaction(async (tx: any) => {
             const order = await tx.order.findUnique({
               where: { id: paymentIntent.metadata.orderId },
             });
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         logger.error(`[${requestId}] Payment intent failed: ${paymentIntent.id}`);
         
         if (paymentIntent.metadata.orderId) {
-          await prisma.$transaction(async (tx) => {
+          await prisma.$transaction(async (tx: any) => {
             await tx.order.update({
               where: { id: paymentIntent.metadata.orderId },
               data: {
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (order) {
-          await prisma.$transaction(async (tx) => {
+          await prisma.$transaction(async (tx: any) => {
             await tx.order.update({
               where: { id: order.id },
               data: {

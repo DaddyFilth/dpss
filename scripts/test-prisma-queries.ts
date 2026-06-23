@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
 
 const prisma = new PrismaClient().$extends(withAccelerate());
@@ -67,7 +67,7 @@ async function main() {
       take: 3,
     });
     console.log(`✅ Found ${products.length} products`);
-    products.forEach((p) => {
+    products.forEach((p: any) => {
       console.log(`   - ${p.name} (${p.productCategory?.name || 'No category'})`);
     });
     console.log();
@@ -109,7 +109,7 @@ async function main() {
 
     // Test 9: Transaction example
     console.log('9️⃣ Testing transaction...');
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.findFirst();
       if (user) {
         await tx.auditLog.create({

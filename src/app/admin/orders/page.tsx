@@ -21,10 +21,6 @@ export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   const fetchOrders = async () => {
     try {
       const response = await fetch('/api/admin/orders');
@@ -37,6 +33,11 @@ export default function OrdersPage() {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchOrders();
+  }, []);
+
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/admin/orders/${orderId}`, {
@@ -46,9 +47,11 @@ export default function OrdersPage() {
       });
 
       if (response.ok) {
-        setOrders(orders.map(order =>
-          order.id === orderId ? { ...order, status: newStatus as any } : order
-        ));
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === orderId ? { ...order, status: newStatus as Order['status'] } : order
+          )
+        );
       }
     } catch (error) {
       console.error('Failed to update order status:', error);
@@ -131,6 +134,7 @@ export default function OrdersPage() {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
               className="px-4 py-2 rounded-md border border-input bg-background"
+              aria-label="Filter by status"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -205,6 +209,7 @@ export default function OrdersPage() {
                           value={order.status}
                           onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
                           className="px-2 py-1 rounded-md border border-input bg-background text-sm"
+                          aria-label="Update order status"
                         >
                           <option value="PENDING">Pending</option>
                           <option value="PROCESSING">Processing</option>

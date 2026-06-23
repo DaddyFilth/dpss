@@ -11,7 +11,7 @@ async function getProducts() {
       orderBy: { createdAt: 'desc' },
     });
     
-    return products.map(p => ({
+    return products.map((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
@@ -125,7 +125,7 @@ export default async function ProductsPage() {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {products.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

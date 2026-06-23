@@ -30,14 +30,14 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Two-Factor Authentication</label>
-              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background">
+              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background" aria-label="Two-Factor Authentication">
                 <option>Disabled</option>
                 <option>Enabled</option>
               </select>
             </div>
             <div>
               <label className="text-sm font-medium">Session Timeout</label>
-              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background">
+              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background" aria-label="Session Timeout">
                 <option>30 minutes</option>
                 <option>1 hour</option>
                 <option>24 hours</option>
@@ -65,21 +65,21 @@ export default function SettingsPage() {
                 <p className="font-medium">Email Notifications</p>
                 <p className="text-sm text-muted-foreground">Receive email alerts for important events</p>
               </div>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <input type="checkbox" className="rounded" defaultChecked aria-label="Email Notifications" />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Low Stock Alerts</p>
                 <p className="text-sm text-muted-foreground">Get notified when stock is low</p>
               </div>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <input type="checkbox" className="rounded" defaultChecked aria-label="Low Stock Alerts" />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">New Order Alerts</p>
                 <p className="text-sm text-muted-foreground">Instant notification for new orders</p>
               </div>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <input type="checkbox" className="rounded" defaultChecked aria-label="New Order Alerts" />
             </div>
             <Button>
               <Save className="mr-2 h-4 w-4" />
@@ -99,7 +99,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Theme</label>
-              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background">
+              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background" aria-label="Theme">
                 <option>Light</option>
                 <option>Dark</option>
                 <option>System</option>
@@ -136,6 +136,7 @@ export default function SettingsPage() {
                 type="text"
                 defaultValue="AI Dropship"
                 className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background"
+                aria-label="Store Name"
               />
             </div>
             <div>
@@ -144,11 +145,12 @@ export default function SettingsPage() {
                 type="email"
                 defaultValue="support@aidropship.com"
                 className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background"
+                aria-label="Store Email"
               />
             </div>
             <div>
               <label className="text-sm font-medium">Currency</label>
-              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background">
+              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background" aria-label="Currency">
                 <option>USD ($)</option>
                 <option>EUR (€)</option>
                 <option>GBP (£)</option>
@@ -183,7 +185,7 @@ export default function SettingsPage() {
                 <p className="font-medium">Sandbox Mode</p>
                 <p className="text-sm text-muted-foreground">Use test environment for payments</p>
               </div>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <input type="checkbox" className="rounded" defaultChecked aria-label="Sandbox Mode" />
             </div>
             <Button>
               <Save className="mr-2 h-4 w-4" />
@@ -203,7 +205,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Backup Frequency</label>
-              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background">
+              <select className="w-full mt-1 px-3 py-2 rounded-md border border-input bg-background" aria-label="Backup Frequency">
                 <option>Daily</option>
                 <option>Weekly</option>
                 <option>Monthly</option>

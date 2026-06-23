@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     });
 
     const decryptedSources = await Promise.all(
-      printingSources.map(source => decryptFields('PrintingSource', source))
+      printingSources.map((source: any) => decryptFields('PrintingSource', source))
     );
 
     return NextResponse.json(

@@ -131,7 +131,7 @@ export async function PUT(
     const product = await prisma.product.update({
       where: { id },
       data: updateData,
-    }).then(p => ({
+    }).then((p: any) => ({
       ...p,
       price: Number(p.price),
       comparePrice: p.comparePrice ? Number(p.comparePrice) : undefined,
