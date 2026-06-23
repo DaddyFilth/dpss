@@ -20,11 +20,6 @@ export const logger = pino({
   formatters: {
     level: (label) => ({ level: label }),
   },
-  mixin() {
-    return {
-      requestId: crypto.randomUUID(),
-    };
-  },
 });
 
 export function createRequestLogger(requestId?: string) {
