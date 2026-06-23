@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Search, 
-  Filter, 
-  Download, 
+import {
+  Search,
   AlertTriangle,
   Package,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface InventoryItem {
   id: string;
@@ -24,62 +26,110 @@ interface InventoryItem {
   lastRestocked: string;
 }
 
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  accent?: string;
+  subtitle?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const MOCK_INVENTORY: InventoryItem[] = [
+  { id: '1', name: 'Wireless Headphones', sku: 'WH-001', stock: 45, category: 'Electronics', price: 199.99, lowStockThreshold: 10, lastRestocked: '2024-01-10' },
+  { id: '2', name: 'Smart Watch', sku: 'SW-002', stock: 8, category: 'Electronics', price: 149.99, lowStockThreshold: 10, lastRestocked: '2024-01-05' },
+  { id: '3', name: 'Bluetooth Speaker', sku: 'BS-003', stock: 23, category: 'Electronics', price: 79.99, lowStockThreshold: 15, lastRestocked: '2024-01-12' },
+  { id: '4', name: 'USB-C Hub', sku: 'UC-004', stock: 5, category: 'Accessories', price: 39.99, lowStockThreshold: 20, lastRestocked: '2024-01-02' },
+  { id: '5', name: 'Laptop Stand', sku: 'LS-005', stock: 67, category: 'Accessories', price: 49.99, lowStockThreshold: 15, lastRestocked: '2024-01-15' },
+  { id: '6', name: 'Wireless Mouse', sku: 'WM-006', stock: 12, category: 'Electronics', price: 29.99, lowStockThreshold: 25, lastRestocked: '2024-01-08' },
+];
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+
+function StatCard({ title, value, icon, accent, subtitle }: StatCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <span className={accent ?? 'text-muted-foreground'}>{icon}</span>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+
 export default function InventoryPage() {
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showLowStock, setShowLowStock] = useState(false);
 
-  useEffect(() => {
-    fetchInventory();
-  }, []);
+  // ---- derived data (memoised) ------------------------------------------------
 
-  const fetchInventory = async () => {
-    try {
-      // Mock data - in real app, fetch from API
-      const mockInventory: InventoryItem[] = [
-        { id: '1', name: 'Wireless Headphones', sku: 'WH-001', stock: 45, category: 'Electronics', price: 199.99, lowStockThreshold: 10, lastRestocked: '2024-01-10' },
-        { id: '2', name: 'Smart Watch', sku: 'SW-002', stock: 8, category: 'Electronics', price: 149.99, lowStockThreshold: 10, lastRestocked: '2024-01-05' },
-        { id: '3', name: 'Bluetooth Speaker', sku: 'BS-003', stock: 23, category: 'Electronics', price: 79.99, lowStockThreshold: 15, lastRestocked: '2024-01-12' },
-        { id: '4', name: 'USB-C Hub', sku: 'UC-004', stock: 5, category: 'Accessories', price: 39.99, lowStockThreshold: 20, lastRestocked: '2024-01-02' },
-        { id: '5', name: 'Laptop Stand', sku: 'LS-005', stock: 67, category: 'Accessories', price: 49.99, lowStockThreshold: 15, lastRestocked: '2024-01-15' },
-        { id: '6', name: 'Wireless Mouse', sku: 'WM-006', stock: 12, category: 'Electronics', price: 29.99, lowStockThreshold: 25, lastRestocked: '2024-01-08' },
-      ];
-      setInventory(mockInventory);
-    } catch (error) {
-      console.error('Failed to fetch inventory:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const lowStockItems = useMemo(
+    () => inventory.filter((item) => item.stock <= item.lowStockThreshold),
+    [inventory],
+  );
 
-  const handleStockUpdate = async (itemId: string, newStock: number) => {
-    try {
-      // In real app, call API to update stock
-      setInventory(inventory.map(item =>
-        item.id === itemId ? { ...item, stock: newStock } : item
-      ));
-    } catch (error) {
-      console.error('Failed to update stock:', error);
-    }
-  };
+  const categories = useMemo(
+    () => [...new Set(inventory.map((item) => item.category))],
+    [inventory],
+  );
 
-  const filteredInventory = inventory.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.sku.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || item.category === selectedCategory;
-    const matchesLowStock = !showLowStock || item.stock <= item.lowStockThreshold;
-    return matchesSearch && matchesCategory && matchesLowStock;
-  });
+  const totalStock = useMemo(
+    () => inventory.reduce((sum, item) => sum + item.stock, 0),
+    [inventory],
+  );
 
-  const lowStockItems = inventory.filter(item => item.stock <= item.lowStockThreshold);
-  const categories = [...new Set(inventory.map(item => item.category))];
-  const totalStock = inventory.reduce((sum, item) => sum + item.stock, 0);
+  const filteredInventory = useMemo(
+    () =>
+      inventory.filter((item) => {
+        const matchesSearch =
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.sku.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || item.category === selectedCategory;
+        const matchesLowStock = !showLowStock || item.stock <= item.lowStockThreshold;
+        return matchesSearch && matchesCategory && matchesLowStock;
+      }),
+    [inventory, searchTerm, selectedCategory, showLowStock],
+  );
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>;
-  }
+  // ---- event handlers (memoised) ----------------------------------------------
+
+  const handleStockUpdate = useCallback(
+    async (itemId: string, newStock: number) => {
+      // Guard against NaN from empty input
+      if (Number.isNaN(newStock) || newStock < 0) return;
+
+      const previousInventory = inventory;
+      // Optimistic update
+      setInventory((prev) =>
+        prev.map((item) => (item.id === itemId ? { ...item, stock: newStock } : item)),
+      );
+
+      try {
+        // TODO: replace with real API call
+        // await updateStock(itemId, newStock);
+      } catch (error) {
+        // Roll back on failure
+        setInventory(previousInventory);
+        console.error('Failed to update stock:', error);
+      }
+    },
+    [inventory],
+  );
 
   return (
     <div className="space-y-6">
@@ -96,46 +146,28 @@ export default function InventoryPage() {
 
       {/* Inventory Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{inventory.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalStock}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{lowStockItems.length}</div>
-            <p className="text-xs text-muted-foreground">Need attention</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categories</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Products"
+          value={inventory.length}
+          icon={<Package className="h-4 w-4" />}
+        />
+        <StatCard
+          title="Total Stock"
+          value={totalStock}
+          icon={<TrendingUp className="h-4 w-4" />}
+        />
+        <StatCard
+          title="Low Stock Items"
+          value={lowStockItems.length}
+          icon={<AlertTriangle className="h-4 w-4 text-yellow-500" />}
+          accent="text-yellow-600"
+          subtitle="Need attention"
+        />
+        <StatCard
+          title="Categories"
+          value={categories.length}
+          icon={<Package className="h-4 w-4" />}
+        />
       </div>
 
       {/* Low Stock Alerts */}
@@ -172,7 +204,11 @@ export default function InventoryPage() {
           <div className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <label htmlFor="inventory-search" className="sr-only">
+                Search products by name or SKU
+              </label>
               <input
+                id="inventory-search"
                 type="search"
                 placeholder="Search products..."
                 value={searchTerm}
@@ -246,10 +282,16 @@ export default function InventoryPage() {
                     <td className="p-3">{item.category}</td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
+                        <label htmlFor={`stock-${item.id}`} className="sr-only">
+                          Stock for {item.name}
+                        </label>
                         <input
+                          id={`stock-${item.id}`}
                           type="number"
                           value={item.stock}
-                          onChange={(e) => handleStockUpdate(item.id, parseInt(e.target.value))}
+                          onChange={(e) =>
+                            handleStockUpdate(item.id, parseInt(e.target.value, 10))
+                          }
                           className="w-20 px-2 py-1 rounded border border-input bg-background text-sm"
                           min="0"
                         />
