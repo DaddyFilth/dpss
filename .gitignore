@@ -50,7 +50,7 @@ next-env.d.ts
 *.sqlite3
 
 # prisma
-prisma/migrations/
+# prisma/migrations/
 
 # security
 *.key

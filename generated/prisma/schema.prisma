@@ -18,24 +18,24 @@ enum Role {
 
 // User model with security fields
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  password      String    // Hashed password
-  image         String?
-  role          Role      @default(CUSTOMER)
+  id               String    @id @default(cuid())
+  name             String?
+  email            String    @unique
+  emailVerified    DateTime?
+  password         String // Hashed password
+  image            String?
+  role             Role      @default(CUSTOMER)
   stripeCustomerId String? // Stripe customer ID for payments
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  lastLogin     DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastLogin        DateTime?
 
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
-  cart          Cart?
-  reviews       Review[]
-  wishlist      WishlistItem[]
+  accounts       Account[]
+  sessions       Session[]
+  orders         Order[]
+  cart           Cart?
+  reviews        Review[]
+  wishlist       WishlistItem[]
   socialAccounts SocialAccount[]
 
   @@index([email])
@@ -84,19 +84,19 @@ model VerificationToken {
 
 // Social accounts for multi-platform posting
 model SocialAccount {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   userId            String
-  provider          String   // google, facebook, instagram, twitter, pinterest
+  provider          String // google, facebook, instagram, twitter, pinterest
   providerAccountId String
   accessToken       String?
   refreshToken      String?
-  profile           Json?    // Store profile data
+  profile           Json? // Store profile data
   expiresAt         DateTime?
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   socialPosts SocialPost[]
 
   @@unique([userId, provider])
@@ -113,20 +113,20 @@ enum SocialPostStatus {
 }
 
 model SocialPost {
-  id          String          @id @default(cuid())
+  id          String           @id @default(cuid())
   productId   String
   accountId   String
-  platform    String          // instagram, facebook, twitter, pinterest
+  platform    String // instagram, facebook, twitter, pinterest
   content     String
-  imageUrl    String?         // Post image URL
+  imageUrl    String? // Post image URL
   status      SocialPostStatus @default(PENDING)
-  externalId  String?         // Platform's post ID
-  metrics     Json?           // Engagement metrics (likes, shares, etc.)
+  externalId  String? // Platform's post ID
+  metrics     Json? // Engagement metrics (likes, shares, etc.)
   scheduledAt DateTime?
   postedAt    DateTime?
   error       String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   socialAccount SocialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -140,41 +140,41 @@ model SocialPost {
 
 // Product catalog
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  price       Decimal  @db.Decimal(10, 2)
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  price        Decimal  @db.Decimal(10, 2)
   comparePrice Decimal? @db.Decimal(10, 2)
-  image       String
-  images      String[] // Array of image URLs
-  category    String
-  tags        String[]
-  stock       Int      @default(0)
-  sku         String?  @unique
-  featured    Boolean  @default(false)
-  rating      Float    @default(0)
-  reviewsCount Int     @default(0)
-  aiScore     Float?   // AI recommendation score
-  aiTags      String[] // AI-generated tags
-  
+  image        String
+  images       String[] // Array of image URLs
+  category     String
+  tags         String[]
+  stock        Int      @default(0)
+  sku          String?  @unique
+  featured     Boolean  @default(false)
+  rating       Float    @default(0)
+  reviewsCount Int      @default(0)
+  aiScore      Float? // AI recommendation score
+  aiTags       String[] // AI-generated tags
+
   // Customization support
-  customizable Boolean  @default(false)
+  customizable        Boolean @default(false)
   customizationConfig Json? // Configuration for customization options (text, images, etc.)
 
   categoryId       String?
   printingSourceId String?
-  printingSource  PrintingSource? @relation(fields: [printingSourceId], references: [id])
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  printingSource   PrintingSource? @relation(fields: [printingSourceId], references: [id])
 
-  orderItems         OrderItem[]
-  reviews            Review[]
-  wishlist           WishlistItem[]
-  cartItems          CartItem[]
-  customizations     ProductCustomization[]
-  socialPosts        SocialPost[]
-  productCategory    ProductCategory? @relation("CategoryProducts", fields: [categoryId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderItems      OrderItem[]
+  reviews         Review[]
+  wishlist        WishlistItem[]
+  cartItems       CartItem[]
+  customizations  ProductCustomization[]
+  socialPosts     SocialPost[]
+  productCategory ProductCategory?       @relation("CategoryProducts", fields: [categoryId], references: [id])
 
   @@index([categoryId])
   @@index([featured])
@@ -224,18 +224,18 @@ enum PaymentStatus {
 
 // Orders
 model Order {
-  id              String        @id @default(cuid())
-  userId          String
-  user            User          @relation(fields: [userId], references: [id])
-  status          OrderStatus  @default(PENDING)
-  total           Decimal       @db.Decimal(10, 2)
-  subtotal        Decimal       @db.Decimal(10, 2)
-  tax             Decimal       @db.Decimal(10, 2)
-  shipping        Decimal       @db.Decimal(10, 2)
-  paymentMethod   String
-  paymentId       String?       // Stripe/PayPal payment ID
-  paymentStatus   PaymentStatus @default(PENDING)
-  
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  status        OrderStatus   @default(PENDING)
+  total         Decimal       @db.Decimal(10, 2)
+  subtotal      Decimal       @db.Decimal(10, 2)
+  tax           Decimal       @db.Decimal(10, 2)
+  shipping      Decimal       @db.Decimal(10, 2)
+  paymentMethod String
+  paymentId     String? // Stripe/PayPal payment ID
+  paymentStatus PaymentStatus @default(PENDING)
+
   // Shipping address
   shippingName    String
   shippingEmail   String
@@ -245,12 +245,12 @@ model Order {
   shippingState   String
   shippingZip     String
   shippingCountry String
-  
-  trackingNumber  String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
 
-  items           OrderItem[]
+  trackingNumber String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  items OrderItem[]
 
   @@index([userId])
   @@index([status])
@@ -263,13 +263,13 @@ model OrderItem {
   productId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
-  
+
   // Customization data
   customizationData Json? // Store user's custom design/text/images
-  customizationCost Decimal @db.Decimal(10, 2) @default(0)
-  
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+  customizationCost Decimal @default(0) @db.Decimal(10, 2)
+
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product     @relation(fields: [productId], references: [id])
   printOrder PrintOrder?
 
   @@index([orderId])
@@ -287,8 +287,8 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([productId, userId])
   @@index([productId])
@@ -302,8 +302,8 @@ model WishlistItem {
   userId    String
   createdAt DateTime @default(now())
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([productId, userId])
   @@index([userId])
@@ -344,27 +344,27 @@ enum PrintSourceProvider {
 model PrintingSource {
   id        String              @id @default(cuid())
   name      String
-  apiKey    String?             // API key for the service
-  apiSecret String?             // API secret for the service
+  apiKey    String? // API key for the service
+  apiSecret String? // API secret for the service
   provider  PrintSourceProvider
   status    PrintSourceStatus   @default(ACTIVE)
-  
+
   // API configuration
-  apiUrl    String?
+  apiUrl     String?
   webhookUrl String?
-  
+
   // Pricing configuration
-  basePrice  Decimal? @db.Decimal(10, 2)
-  markup    Decimal? @db.Decimal(10, 2) @default(0)
-  
+  basePrice Decimal? @db.Decimal(10, 2)
+  markup    Decimal? @default(0) @db.Decimal(10, 2)
+
   // Production times
   productionDays Int @default(3)
   shippingDays   Int @default(5)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  products Product[]
+
+  products    Product[]
   printOrders PrintOrder[]
 
   @@index([provider])
@@ -373,25 +373,25 @@ model PrintingSource {
 
 // Product customization templates
 model ProductCustomization {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   productId String
   name      String
-  type      String   // "text", "image", "color", "size", etc.
-  
+  type      String // "text", "image", "color", "size", etc.
+
   // Customization options
-  options   Json?    // Array of available options
-  required  Boolean  @default(false)
-  maxChars  Int?     // For text fields
-  maxFiles  Int?     // For image uploads
-  price     Decimal? @db.Decimal(10, 2) // Additional cost for customization
-  
+  options  Json? // Array of available options
+  required Boolean  @default(false)
+  maxChars Int? // For text fields
+  maxFiles Int? // For image uploads
+  price    Decimal? @db.Decimal(10, 2) // Additional cost for customization
+
   // Template design
-  template  Json?    // Design template/config
+  template     Json? // Design template/config
   previewImage String?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, name])
@@ -410,28 +410,28 @@ enum PrintOrderStatus {
 }
 
 model PrintOrder {
-  id               String           @id @default(cuid())
-  orderItemId      String           @unique
+  id               String         @id @default(cuid())
+  orderItemId      String         @unique
   printingSourceId String
-  orderItem        OrderItem        @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
-  printingSource   PrintingSource   @relation(fields: [printingSourceId], references: [id])
+  orderItem        OrderItem      @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  printingSource   PrintingSource @relation(fields: [printingSourceId], references: [id])
 
   // Print order data
-  printFileUrl     String?          // URL of the print-ready file
-  printSpecs       Json?            // Print specifications (size, material, etc.)
+  printFileUrl String? // URL of the print-ready file
+  printSpecs   Json? // Print specifications (size, material, etc.)
 
   // Status tracking
-  status           PrintOrderStatus @default(PENDING)
-  trackingNumber   String?
+  status            PrintOrderStatus @default(PENDING)
+  trackingNumber    String?
   estimatedDelivery DateTime?
 
   // Error handling
-  errorMessage     String?
-  retryCount       Int              @default(0)
-  lastRetryAt      DateTime?
+  errorMessage String?
+  retryCount   Int       @default(0)
+  lastRetryAt  DateTime?
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderItemId])
   @@index([printingSourceId])
@@ -443,7 +443,7 @@ model NewsletterSubscription {
   id        String   @id @default(cuid())
   email     String   @unique
   isActive  Boolean  @default(true)
-  source    String?  // Where they subscribed (homepage, checkout, etc.)
+  source    String? // Where they subscribed (homepage, checkout, etc.)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -453,17 +453,17 @@ model NewsletterSubscription {
 
 // Product categories for better organization
 model ProductCategory {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
+  id          String            @id @default(cuid())
+  name        String            @unique
+  slug        String            @unique
   description String?
   parentId    String?
-  parent      ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  parent      ProductCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children    ProductCategory[] @relation("CategoryHierarchy")
-  products    Product[] @relation("CategoryProducts")
+  products    Product[]         @relation("CategoryProducts")
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([slug])
   @@index([parentId])
@@ -483,18 +483,18 @@ enum CouponStatus {
 }
 
 model CouponCode {
-  id              String      @id @default(cuid())
-  code            String      @unique
-  description     String?
-  type            CouponType
-  value           Decimal     @db.Decimal(10, 2)
-  minOrderAmount  Decimal?    @db.Decimal(10, 2)
-  maxUses         Int?
-  usedCount       Int         @default(0)
-  expiresAt       DateTime?
-  status          CouponStatus @default(ACTIVE)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id             String       @id @default(cuid())
+  code           String       @unique
+  description    String?
+  type           CouponType
+  value          Decimal      @db.Decimal(10, 2)
+  minOrderAmount Decimal?     @db.Decimal(10, 2)
+  maxUses        Int?
+  usedCount      Int          @default(0)
+  expiresAt      DateTime?
+  status         CouponStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([code])
   @@index([status])
@@ -505,8 +505,8 @@ model CouponCode {
 model AnalyticsEvent {
   id        String   @id @default(cuid())
   userId    String?
-  eventType String   // page_view, add_to_cart, purchase, etc.
-  eventData Json?    // Flexible event data
+  eventType String // page_view, add_to_cart, purchase, etc.
+  eventData Json? // Flexible event data
   sessionId String?
   ipAddress String?
   userAgent String?

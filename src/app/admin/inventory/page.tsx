@@ -9,6 +9,8 @@ import {
   Package,
   TrendingUp,
   RefreshCw,
+  Filter,
+  Download,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -113,18 +115,25 @@ export default function InventoryPage() {
       // Guard against NaN from empty input
       if (Number.isNaN(newStock) || newStock < 0) return;
 
-      const previousInventory = inventory;
-      // Optimistic update
+      // Capture previous stock from current state (not inside functional update)
+      const currentItem = inventory.find((i) => i.id === itemId);
+      const previousStock = currentItem?.stock ?? 0;
+
+      // Update state with new stock value
       setInventory((prev) =>
-        prev.map((item) => (item.id === itemId ? { ...item, stock: newStock } : item)),
+        prev.map((item) => (item.id === itemId ? { ...item, stock: newStock } : item))
       );
 
       try {
         // TODO: replace with real API call
         // await updateStock(itemId, newStock);
       } catch (error) {
-        // Roll back on failure
-        setInventory(previousInventory);
+        // Roll back on failure using targeted functional update
+        setInventory((prev) =>
+          prev.map((item) =>
+            item.id === itemId ? { ...item, stock: previousStock } : item,
+          ),
+        );
         console.error('Failed to update stock:', error);
       }
     },
@@ -217,7 +226,11 @@ export default function InventoryPage() {
               />
             </div>
             
+            <label htmlFor="category-filter" className="sr-only">
+              Filter by category
+            </label>
             <select
+              id="category-filter"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 rounded-md border border-input bg-background"
